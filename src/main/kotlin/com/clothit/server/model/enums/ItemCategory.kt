@@ -1,6 +1,5 @@
 package com.clothit.server.model.enums
 
 enum class ItemCategory {
-
-    SUMMER, AUTUMN, WINTER, SPRING
+    ACCESSORIES, TOPS, BOTTOMS, SHOES, OUTWEAR
 }

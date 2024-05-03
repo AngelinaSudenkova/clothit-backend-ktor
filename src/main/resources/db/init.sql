@@ -20,6 +20,18 @@ CREATE TABLE IF NOT EXISTS files
     time_updated  TIMESTAMP    NOT NULL
 );
 
+
+CREATE TABLE IF NOT EXISTS outfits(
+    id      SERIAL          NOT NULL PRIMARY KEY,
+    season  VARCHAR(25)     NOT NULL,
+    description  VARCHAR(255) NULL,
+    name          VARCHAR(50) NOT NULL,
+    time_created TIMESTAMP    NOT NULL,
+    time_updated  TIMESTAMP    NOT NULL
+);
+
+
+
 ALTER TABLE files ADD CONSTRAINT fk_files_items
     FOREIGN KEY (item_id) REFERENCES items(id) ON DELETE CASCADE;
 
