@@ -55,7 +55,7 @@ object FileDaoImpl : FileDao {
     }
 
     override fun getAllByItemId(itemId: Int): List<FileEntity> {
-        val result = (FileTable innerJoin ItemTable).select(FileTable.item_id eq ItemTable.id)
+        val result = (FileTable innerJoin ItemTable).selectAll().where(FileTable.item_id eq ItemTable.id)
             .where { FileTable.item_id eq itemId }
         return transaction {
             result.map {
@@ -75,6 +75,31 @@ object FileDaoImpl : FileDao {
             }
         }
     }
+
+    override fun getByItemId(itemId: Int): FileEntity {
+        val result = transaction {
+            (FileTable innerJoin ItemTable)
+                .select { FileTable.item_id eq ItemTable.id and (FileTable.item_id eq itemId) }
+                .singleOrNull()
+        }
+        return result?.let {
+            FileEntity(
+                it[FileTable.id],
+                it[FileTable.name],
+                it[FileTable.size],
+                ItemEntity(
+                    it[ItemTable.id],
+                    it[ItemTable.category].let { t -> ItemCategory.valueOf(t) },
+                    it[ItemTable.description],
+                    it[ItemTable.timeCreated]
+                ),
+                it[FileTable.timeCreated],
+                it[FileTable.timeUpdated]
+            )
+        } ?: throw NoSuchElementException("File with item id $itemId not found")
+    }
+
+
 
     override fun update(entity: FileEntity){
 

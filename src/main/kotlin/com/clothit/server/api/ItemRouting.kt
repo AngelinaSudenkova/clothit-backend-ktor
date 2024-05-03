@@ -15,5 +15,10 @@ fun Application.itemRoutingConfigure() {
             val idDto = itemController.save(req)
             call.respond(idDto.toString())
         }
+
+        get("service/clothit/api/v1/item/list") {
+            val listShortItems = itemController.get()
+            call.respond(listShortItems.toString())
+        }
     }
 }

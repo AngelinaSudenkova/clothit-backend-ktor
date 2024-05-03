@@ -31,4 +31,10 @@ class FileServiceImpl(private val fileDao: FileDao) : FileService {
         }
         return fileId
     }
+
+    override fun getById(fileId: Int): ByteArray {
+        val fileEntity = fileDao.getById(fileId)
+        val fileName = fileEntity.name
+        return FileUtil.readFromFile(fileName)
+    }
 }

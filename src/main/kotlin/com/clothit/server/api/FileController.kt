@@ -11,4 +11,8 @@ class FileController(private val fileService: FileService = FileServiceImpl(File
         val fileId = fileService.save(req)
         return IdDto(fileId)
     }
+
+    fun getById(id: Int) : ByteArray{
+        return fileService.getById(id)
+    }
 }

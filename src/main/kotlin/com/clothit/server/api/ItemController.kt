@@ -1,6 +1,7 @@
 package com.clothit.server.api
 
 import com.clothit.server.api.dto.IdDto
+import com.clothit.server.api.dto.ItemShortListDto
 import com.clothit.server.api.req.ItemCreateReq
 import com.clothit.server.dao.impl.FileDaoImpl
 import com.clothit.server.dao.impl.ItemDaoImpl
@@ -13,6 +14,12 @@ class ItemController(private val itemService: ItemService = ItemServiceImpl(Item
     fun save(req: ItemCreateReq): IdDto {
         val id = itemService.save(req);
         return IdDto(id)
+    }
+
+    fun get() : ItemShortListDto? {
+        val itemShortListDto = itemService.getAll(1)
+        //TODO(authorization session)
+        return itemShortListDto
     }
 
 }
