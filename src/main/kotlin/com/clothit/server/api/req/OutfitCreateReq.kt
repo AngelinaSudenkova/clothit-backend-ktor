@@ -8,6 +8,5 @@ data class OutfitCreateReq(
     val season: OutfitSeason,
     val description: String,
     val name: String,
-    val filesId: List<Int>
-
+    val itemsId: List<Int>
 )
