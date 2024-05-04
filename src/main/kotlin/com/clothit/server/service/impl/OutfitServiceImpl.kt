@@ -6,6 +6,7 @@ import com.clothit.server.dao.ItemsToOutfitsDao
 import com.clothit.server.dao.OutfitDao
 import com.clothit.server.model.entity.OutfitEntity
 import com.clothit.server.service.OutfitService
+import org.jetbrains.exposed.sql.transactions.transaction
 
 class OutfitServiceImpl(
     private val outfitDao: OutfitDao,
@@ -13,16 +14,20 @@ class OutfitServiceImpl(
     private val itemsToOutfitsDao: ItemsToOutfitsDao
 ): OutfitService {
     override fun save(req: OutfitCreateReq): Int {
-        val outfitEntity = OutfitEntity(season = req.season,
-            description = req.description,
-            name = req.name)
-        val outfitEntityId = outfitDao.save(outfitEntity)
-        val itemsId = req.itemsId
-        for(itemId in itemsId){
-            if(!checkIfItemExists(itemId)) throw NoSuchElementException("Item with id $itemId not found")
-            itemsToOutfitsDao.save(outfitEntityId, itemId)
+        return transaction {
+            val outfitEntity = OutfitEntity(
+                season = req.season,
+                description = req.description,
+                name = req.name
+            )
+            val outfitEntityId = outfitDao.save(outfitEntity)
+            val itemsId = req.itemsId
+            for (itemId in itemsId) {
+                if (!checkIfItemExists(itemId)) throw NoSuchElementException("Item with id $itemId not found")
+                itemsToOutfitsDao.save(outfitEntityId, itemId)
+            }
+            outfitEntityId
         }
-        return outfitEntityId
     }
     private fun checkIfItemExists(itemId: Int) : Boolean{
         return itemDao.checkIfExistsById(itemId)
