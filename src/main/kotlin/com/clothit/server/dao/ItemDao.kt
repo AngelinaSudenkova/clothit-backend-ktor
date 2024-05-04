@@ -9,4 +9,7 @@ interface ItemDao {
     fun getById(id: Int): ItemEntity;
 
     fun getAll(): List<ItemEntity>;
+
+    fun checkIfExistsById(id: Int) : Boolean
+
 }

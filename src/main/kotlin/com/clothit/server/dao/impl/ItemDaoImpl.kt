@@ -49,4 +49,18 @@ object ItemDaoImpl : ItemDao {
             }
         }
     }
+
+    override fun checkIfExistsById(id: Int): Boolean {
+        var exists = false
+        transaction {
+            val result = ItemTable
+                .select(ItemTable.id)
+                .where { ItemTable.id eq id }
+                .limit(1)
+                .toList()
+            exists = result.isNotEmpty()
+        }
+        return exists
+    }
+
 }

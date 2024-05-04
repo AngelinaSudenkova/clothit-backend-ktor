@@ -8,4 +8,5 @@ interface ItemService {
     fun save(req: ItemCreateReq): Int
 
     fun getAll(userId: Long) : ItemShortListDto?
+
 }
