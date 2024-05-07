@@ -25,7 +25,7 @@ object OutfitDaoImpl: OutfitDao {
     }
 
     override fun getById(id: Int): OutfitEntity {
-        val result = OutfitTable.selectAll().where { OutfitTable.id eq id }.singleOrNull()
+        val result = transaction {   OutfitTable.selectAll().where { OutfitTable.id eq id }.singleOrNull() }
         return result?.let {
             OutfitEntity(
                 it[OutfitTable.id],

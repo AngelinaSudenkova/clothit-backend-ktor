@@ -19,5 +19,10 @@ fun Application.outfitRoutingConfigure() {
             val listShortOutfits = outfitController.get()
             call.respond(listShortOutfits.toString())
         }
+        get("service/clothit/api/v1/outfit/{outfitId}") {
+            val outfitId = call.parameters["outfitId"]?.toIntOrNull()
+            val shortOutfit = outfitController.get(outfitId!!)
+            call.respond(shortOutfit.toString())
+        }
     }
 }

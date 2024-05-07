@@ -50,6 +50,12 @@ class OutfitServiceImpl(
         return OutfitShortListDto(listShortOutfitDto)
     }
 
+    override fun getOneById(userId: Long, outfitId: Int): OutfitShortDto {
+        val outfitEntity = outfitDao.getById(outfitId)
+        val fileEntities = fileDao.getByOutfitId(outfitId)
+        return outfitEntity.toShortOutfitDto(fileEntities)
+    }
+
 
     private fun checkIfItemExists(itemId: Int) : Boolean{
         return itemDao.checkIfExistsById(itemId)
