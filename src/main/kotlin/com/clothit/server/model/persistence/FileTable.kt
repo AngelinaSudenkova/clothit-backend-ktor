@@ -8,6 +8,7 @@ object FileTable: Table("files") {
     val name = varchar("name", 255)
     val size = long("size")
     val item_id = integer("item_id").references(ItemTable.id).index().nullable()
+    val outfitId = integer("outfit_id").references(OutfitTable.id).index().nullable()
     val timeCreated = timestamp("time_created")
     val timeUpdated = timestamp("time_updated")
 

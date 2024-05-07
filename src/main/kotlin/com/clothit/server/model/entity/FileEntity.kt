@@ -9,12 +9,26 @@ data class FileEntity(
     var name: String,
     var size: Long,
     var item: ItemEntity?,
+    var outfit : OutfitEntity?,
     var timeCreated: Instant,
     var timeUpdated: Instant
 ){
+
+    constructor(name: String, size: Long):
+            this(null, name,
+                size, null, null,
+                DateTimeUtil.getCurrentTime(),
+                DateTimeUtil.getCurrentTime())
     constructor(name: String, size: Long, item: ItemEntity?):
             this(null, name,
-                size, item,
+                size, item, null,
+                DateTimeUtil.getCurrentTime(),
+                DateTimeUtil.getCurrentTime())
+
+
+    constructor(name: String, size: Long, outfit: OutfitEntity?):
+            this(null, name,
+                size, null,outfit,
                 DateTimeUtil.getCurrentTime(),
                 DateTimeUtil.getCurrentTime())
 }

@@ -3,9 +3,12 @@ package com.clothit.server.dao.impl
 import com.clothit.server.dao.FileDao
 import com.clothit.server.model.entity.FileEntity
 import com.clothit.server.model.entity.ItemEntity
+import com.clothit.server.model.entity.OutfitEntity
 import com.clothit.server.model.enums.ItemCategory
+import com.clothit.server.model.enums.OutfitSeason
 import com.clothit.server.model.persistence.FileTable
 import com.clothit.server.model.persistence.ItemTable
+import com.clothit.server.model.persistence.OutfitTable
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.transactions.transaction
@@ -20,6 +23,7 @@ object FileDaoImpl : FileDao {
                 it[name] = entity.name
                 it[size] = entity.size
                 it[item_id] = entity.item?.id
+                it[outfitId] = entity.outfit?.id
                 it[timeCreated] = entity.timeCreated
                 it[timeUpdated] = entity.timeUpdated
             }
@@ -48,6 +52,7 @@ object FileDaoImpl : FileDao {
     //                    it[ItemTable.timeCreated]
     //                ),
                 null,
+                null,
                 it[FileTable.timeCreated],
                 it[FileTable.timeUpdated]
             )
@@ -69,6 +74,7 @@ object FileDaoImpl : FileDao {
                         it[ItemTable.description],
                         it[ItemTable.timeCreated]
                     ),
+                    null,
                     it[FileTable.timeCreated],
                     it[FileTable.timeUpdated]
                 )
@@ -93,13 +99,39 @@ object FileDaoImpl : FileDao {
                     it[ItemTable.description],
                     it[ItemTable.timeCreated]
                 ),
+                null,
                 it[FileTable.timeCreated],
                 it[FileTable.timeUpdated]
             )
         } ?: throw NoSuchElementException("File with item id $itemId not found")
     }
 
+    override fun getByOutfitId(outfitId: Int): List<FileEntity> {
+        return transaction {
+            val result = (FileTable innerJoin OutfitTable).selectAll()
+                .where { FileTable.outfitId eq OutfitTable.id }
+                .andWhere { FileTable.outfitId eq outfitId }
 
+            result.map {
+                FileEntity(
+                    it[FileTable.id],
+                    it[FileTable.name],
+                    it[FileTable.size],
+                    null,
+                    OutfitEntity(
+                        it[OutfitTable.id],
+                        it[OutfitTable.season].let { t -> OutfitSeason.valueOf(t) },
+                        it[OutfitTable.description],
+                        it[OutfitTable.name],
+                        it[OutfitTable.timeCreated],
+                        it[OutfitTable.timeUpdated]
+                    ),
+                    it[FileTable.timeCreated],
+                    it[FileTable.timeUpdated]
+                )
+            }
+        }
+    }
 
     override fun update(entity: FileEntity){
 
@@ -108,6 +140,7 @@ object FileDaoImpl : FileDao {
                 it[name] = entity.name
                 it[size] = entity.size
                 it[item_id] = entity.item?.id
+                it[outfitId] = entity.outfit?.id
                 it[timeCreated] = entity.timeCreated
                 it[timeUpdated] = entity.timeUpdated
             }

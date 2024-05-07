@@ -12,5 +12,7 @@ interface FileDao {
 
     fun getByItemId(itemId: Int): FileEntity
 
+    fun getByOutfitId(outfitId: Int): List<FileEntity>
+
     fun update(entity: FileEntity)
 }

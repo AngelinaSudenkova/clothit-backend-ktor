@@ -22,7 +22,6 @@ class FileServiceImpl(private val fileDao: FileDao) : FileService {
                     val fileEntity = FileEntity(
                         name = part.originalFileName ?: "Unknown",
                         size = byteArray.size.toLong(),
-                        null
                     )
                     fileId = fileDao.save(fileEntity)
 
