@@ -3,6 +3,7 @@ package com.clothit.server.service.impl
 import com.clothit.server.api.dto.ItemShortDto
 import com.clothit.server.api.dto.ItemShortListDto
 import com.clothit.server.api.req.ItemCreateReq
+import com.clothit.server.api.req.ItemUpdateReq
 import com.clothit.server.dao.FileDao
 import com.clothit.server.dao.ItemDao
 import com.clothit.server.model.entity.ItemEntity
@@ -36,5 +37,12 @@ class ItemServiceImpl
         }
         return ItemShortListDto(listShortItemDto)
     }
+
+    override fun updateItem(itemId: Int, req: ItemUpdateReq) {
+        val itemEntity = itemDao.getById(itemId)
+        itemEntity.update(req)
+        itemDao.update(itemEntity)
+    }
+
 
 }

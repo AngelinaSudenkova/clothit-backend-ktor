@@ -2,6 +2,8 @@ package com.clothit.server.api
 
 
 import com.clothit.server.api.req.ItemCreateReq
+import com.clothit.server.api.req.ItemUpdateReq
+import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
@@ -14,6 +16,13 @@ fun Application.itemRoutingConfigure() {
             val req = call.receive<ItemCreateReq>()
             val idDto = itemController.save(req)
             call.respond(idDto.toString())
+        }
+
+        put("service/clothit/api/v1/item/{itemId}") {
+            val itemId = call.parameters["itemId"]?.toIntOrNull()
+            val req = call.receive<ItemUpdateReq>()
+            itemController.update(itemId!!, req)
+            call.respond(HttpStatusCode.OK, "Updated")
         }
 
         get("service/clothit/api/v1/item/list") {

@@ -9,6 +9,7 @@ import com.clothit.server.model.enums.OutfitSeason
 import com.clothit.server.model.persistence.FileTable
 import com.clothit.server.model.persistence.ItemTable
 import com.clothit.server.model.persistence.OutfitTable
+import com.clothit.util.DateTimeUtil
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.transactions.transaction
@@ -45,13 +46,13 @@ object FileDaoImpl : FileDao {
                 it[FileTable.id],
                 it[FileTable.name],
                 it[FileTable.size],
-    //                ItemEntity(
-    //                    it[ItemTable.id],
-    //                    it[ItemTable.category].let { t -> ItemCategory.valueOf(t) },
-    //                    it[ItemTable.description],
-    //                    it[ItemTable.timeCreated]
-    //                ),
-                null,
+                    ItemEntity(
+                        it[ItemTable.id],
+                      //  it[ItemTable.category].let { t -> ItemCategory.valueOf(t) },
+                        ItemCategory.BOTTOMS,
+                        it[ItemTable.description],
+                        it[ItemTable.timeCreated] ?: DateTimeUtil.getCurrentTime()
+                    ),
                 null,
                 it[FileTable.timeCreated],
                 it[FileTable.timeUpdated]

@@ -12,4 +12,7 @@ interface ItemDao {
 
     fun checkIfExistsById(id: Int) : Boolean
 
+    fun update(entity: ItemEntity)
+
+
 }

@@ -7,5 +7,6 @@ interface FileService {
 
     fun getById(fileId: Int) : ByteArray
 
+    suspend fun update(fileId: Int, newFile: MultiPartData)
 
 }

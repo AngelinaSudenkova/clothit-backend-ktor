@@ -2,6 +2,7 @@ package com.clothit.server.service
 
 import com.clothit.server.api.dto.ItemShortListDto
 import com.clothit.server.api.req.ItemCreateReq
+import com.clothit.server.api.req.ItemUpdateReq
 
 interface ItemService {
 
@@ -9,4 +10,5 @@ interface ItemService {
 
     fun getAll(userId: Long) : ItemShortListDto?
 
+    fun updateItem(itemId : Int, req : ItemUpdateReq)
 }

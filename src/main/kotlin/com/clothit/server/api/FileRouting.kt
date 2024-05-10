@@ -9,6 +9,7 @@ import io.ktor.server.routing.*
 
 object FileUrlConstant{
     const val fileViewUrl = "service/clothit/api/v1/file/{fileId}"
+    const val fileUpdateUrl = "service/clothit/api/v1/file/update/{fileId}"
 }
 
 fun Application.fileRoutingConfigure() {
@@ -31,6 +32,17 @@ fun Application.fileRoutingConfigure() {
             //TODO(CUSTOM EXCEPTION)
             val byteArray = fileController.getById(fileId)
             call.respond(byteArray)
+        }
+
+        put(FileUrlConstant.fileUpdateUrl) {
+            val fileId = call.parameters["fileId"]?.toIntOrNull()
+            val multipart = call.receiveMultipart()
+            if (fileId == null) {
+                call.respond(HttpStatusCode.BadRequest, "Invalid file ID")
+                return@put
+            }
+            fileController.update(fileId,multipart)
+            call.respond(HttpStatusCode.OK)
         }
     }
 }

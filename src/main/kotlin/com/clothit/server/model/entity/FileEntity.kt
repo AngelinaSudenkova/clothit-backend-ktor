@@ -19,11 +19,23 @@ data class FileEntity(
                 size, null, null,
                 DateTimeUtil.getCurrentTime(),
                 DateTimeUtil.getCurrentTime())
+
+    constructor(id: Int? , name: String, size: Long):
+            this(id, name,
+                size, null, null,
+                DateTimeUtil.getCurrentTime(),
+                DateTimeUtil.getCurrentTime())
     constructor(name: String, size: Long, item: ItemEntity?):
             this(null, name,
                 size, item, null,
                 DateTimeUtil.getCurrentTime(),
                 DateTimeUtil.getCurrentTime())
+
+    constructor(id: Int, name: String, size: Long, item: ItemEntity?,timeCreated: Instant, timeUpdated: Instant):
+            this(id, name,
+                size, item, null,
+                timeCreated,
+                timeUpdated)
 
 
     constructor(name: String, size: Long, outfit: OutfitEntity?):

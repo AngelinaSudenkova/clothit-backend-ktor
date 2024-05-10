@@ -7,6 +7,7 @@ import com.clothit.server.model.persistence.ItemTable
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
+import org.jetbrains.exposed.sql.update
 
 object ItemDaoImpl : ItemDao {
 
@@ -15,7 +16,7 @@ object ItemDaoImpl : ItemDao {
         var id = -1
         transaction {
             val insertResult = ItemTable.insert {
-                it[category] = entity.category.name
+                it[category] = entity.category!!.name
                 it[description] = entity.description
                 it[timeCreated] = entity.timeCreation
             }
@@ -25,16 +26,17 @@ object ItemDaoImpl : ItemDao {
     }
 
     override fun getById(id: Int): ItemEntity {
-        val result = ItemTable.selectAll().where { ItemTable.id eq id }.singleOrNull()
 
-        return result?.let {
+         val result = transaction {  ItemTable.selectAll().where { ItemTable.id eq id }.singleOrNull()}
+
+        return transaction {  result?.let {
             ItemEntity(
                 it[ItemTable.id],
                 it[ItemTable.category].let { t -> ItemCategory.valueOf(t) },
                 it[ItemTable.description],
                 it[ItemTable.timeCreated]
             )
-        } ?: throw NoSuchElementException("Item with id $id not found") //TODO return custom exception
+        }} ?: throw NoSuchElementException("Item with id $id not found") //TODO return custom exception
     }
 
     override fun getAll(): List<ItemEntity> {
@@ -61,6 +63,17 @@ object ItemDaoImpl : ItemDao {
             exists = result.isNotEmpty()
         }
         return exists
+    }
+
+    override fun update(entity: ItemEntity) {
+
+        transaction {
+            val result = ItemTable.update({ ItemTable.id eq entity.id!! }){
+                it[description] = entity.description
+                it[category] = entity.category!!.name
+            }
+        }
+
     }
 
 }
