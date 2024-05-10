@@ -2,6 +2,9 @@ package com.clothit.server.dao.impl
 
 import com.clothit.server.dao.ItemsToOutfitsDao
 import com.clothit.server.model.persistence.ItemsToOutfitsTable
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
+import org.jetbrains.exposed.sql.and
+import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
@@ -26,6 +29,15 @@ object ItemsToOutfitDaoImpl : ItemsToOutfitsDao {
                 .where { ItemsToOutfitsTable.outfitId eq outfitId }
                 .map { it[ItemsToOutfitsTable.itemId] }
                 .toList()
+        }
+    }
+
+    override fun delete(outfitId: Int, itemId: Int) {
+        transaction {
+            ItemsToOutfitsTable.deleteWhere  {
+                (ItemsToOutfitsTable.itemId eq itemId) and
+                        (ItemsToOutfitsTable.outfitId eq outfitId)
+            }
         }
     }
 }

@@ -8,10 +8,12 @@ import com.clothit.server.model.enums.ItemCategory
 import com.clothit.server.model.enums.OutfitSeason
 import com.clothit.server.model.persistence.FileTable
 import com.clothit.server.model.persistence.ItemTable
+import com.clothit.server.model.persistence.ItemsToOutfitsTable
 import com.clothit.server.model.persistence.OutfitTable
 import com.clothit.util.DateTimeUtil
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.inSubQuery
 import org.jetbrains.exposed.sql.transactions.transaction
 
 
@@ -144,6 +146,14 @@ object FileDaoImpl : FileDao {
                 it[outfitId] = entity.outfit?.id
                 it[timeCreated] = entity.timeCreated
                 it[timeUpdated] = entity.timeUpdated
+            }
+        }
+    }
+
+    override fun delete(outfitId: Int) {
+        transaction {
+            FileTable.deleteWhere {
+                (FileTable.outfitId eq outfitId)
             }
         }
     }

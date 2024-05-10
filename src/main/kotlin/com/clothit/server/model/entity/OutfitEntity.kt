@@ -2,6 +2,7 @@ package com.clothit.server.model.entity
 
 import com.clothit.server.api.FileUrlConstant
 import com.clothit.server.api.dto.OutfitShortDto
+import com.clothit.server.api.req.OutfitUpdateReq
 import com.clothit.server.model.enums.OutfitSeason
 import com.clothit.util.DateTimeUtil
 import com.clothit.util.ServerConstants
@@ -29,5 +30,12 @@ data class OutfitEntity(
         }
 
         return OutfitShortDto(this.id, urls)
+    }
+
+    fun update(req: OutfitUpdateReq){
+        this.name = req.name
+        this.season = req.season
+        this.description = req.description
+        this.timeUpdated = DateTimeUtil.getCurrentTime()
     }
 }

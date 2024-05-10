@@ -4,6 +4,7 @@ import com.clothit.server.api.dto.IdDto
 import com.clothit.server.api.dto.OutfitShortDto
 import com.clothit.server.api.dto.OutfitShortListDto
 import com.clothit.server.api.req.OutfitCreateReq
+import com.clothit.server.api.req.OutfitUpdateReq
 import com.clothit.server.dao.impl.FileDaoImpl
 import com.clothit.server.dao.impl.ItemDaoImpl
 import com.clothit.server.dao.impl.ItemsToOutfitDaoImpl
@@ -27,6 +28,10 @@ class OutfitController(private val outfitService: OutfitService =
     fun get(outfitId: Int) : OutfitShortDto? {
         val outfitShortDto = outfitService.getOneById(1, outfitId)
         return outfitShortDto
+    }
+
+    fun update(outfitId: Int, updateReq: OutfitUpdateReq){
+        outfitService.update(outfitId, updateReq)
     }
 
 }

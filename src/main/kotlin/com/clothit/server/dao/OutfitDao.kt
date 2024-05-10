@@ -9,4 +9,6 @@ interface OutfitDao {
     fun getById(id: Int): OutfitEntity
 
     fun getAll(): List<OutfitEntity>
+
+    fun update(entity: OutfitEntity)
 }

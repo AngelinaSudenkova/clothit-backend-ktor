@@ -5,6 +5,7 @@ import com.clothit.server.model.entity.ItemEntity
 import com.clothit.server.model.enums.ItemCategory
 import com.clothit.server.model.persistence.ItemTable
 import org.jetbrains.exposed.sql.insert
+import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.jetbrains.exposed.sql.update
@@ -38,6 +39,21 @@ object ItemDaoImpl : ItemDao {
             )
         }} ?: throw NoSuchElementException("Item with id $id not found") //TODO return custom exception
     }
+
+    override fun getByIds(ids: List<Int>): List<ItemEntity> {
+        return transaction {
+            ItemTable.select { ItemTable.id inList ids }
+                .map {
+                    ItemEntity(
+                        it[ItemTable.id],
+                        it[ItemTable.category].let { t -> ItemCategory.valueOf(t) },
+                        it[ItemTable.description],
+                        it[ItemTable.timeCreated]
+                    )
+                }
+        }
+    }
+
 
     override fun getAll(): List<ItemEntity> {
         return transaction {

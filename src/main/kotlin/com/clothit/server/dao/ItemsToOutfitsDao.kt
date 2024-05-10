@@ -6,4 +6,6 @@ interface ItemsToOutfitsDao {
 
     fun getItemsIdByOutfitId(outfitId : Int) : List<Int>
 
+    fun delete(outfitId: Int, itemId: Int)
+
 }
