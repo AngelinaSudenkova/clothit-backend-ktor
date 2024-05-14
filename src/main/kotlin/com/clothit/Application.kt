@@ -2,8 +2,8 @@ package com.clothit
 
 
 
+import com.clothit.config.configureRouting
 import com.clothit.config.corsConfigure
-import com.clothit.config.openApiConfigure
 import com.clothit.config.serializationConfigure
 import com.clothit.config.swaggerConfigure
 import com.clothit.server.api.fileRoutingConfigure
@@ -32,6 +32,8 @@ fun Application.module() {
     itemRoutingConfigure()
     fileRoutingConfigure()
     outfitRoutingConfigure()
+    configureRouting()
+
 
     ///-------------config
     serializationConfigure()
@@ -41,5 +43,5 @@ fun Application.module() {
 
 
     swaggerConfigure()
-    openApiConfigure()
+
 }

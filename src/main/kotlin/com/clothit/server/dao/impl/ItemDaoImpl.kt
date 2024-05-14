@@ -92,4 +92,17 @@ object ItemDaoImpl : ItemDao {
 
     }
 
+    override fun getByCategory(category: String): List<ItemEntity>? {
+        return transaction {
+            ItemTable.select { ItemTable.category eq category }.map {
+                ItemEntity(
+                    it[ItemTable.id],
+                    it[ItemTable.category].let { t -> ItemCategory.valueOf(t) },
+                    it[ItemTable.description],
+                    it[ItemTable.timeCreated]
+                )
+            }
+        }
+    }
+
 }

@@ -27,4 +27,9 @@ class ItemController(private val itemService: ItemService = ItemServiceImpl(Item
         itemService.updateItem(itemId, req)
     }
 
+    fun getByCategory(categoryName: String) : ItemShortListDto? {
+        return itemService.getByCategory(categoryName, 1)
+
+    }
+
 }

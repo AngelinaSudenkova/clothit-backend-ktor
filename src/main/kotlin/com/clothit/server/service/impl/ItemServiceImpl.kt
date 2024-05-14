@@ -10,7 +10,8 @@ import com.clothit.server.model.entity.ItemEntity
 import com.clothit.server.service.ItemService
 
 class ItemServiceImpl
-(   private val itemDao: ItemDao,
+    (
+    private val itemDao: ItemDao,
     private val fileDao: FileDao
 ) : ItemService {
 
@@ -30,8 +31,8 @@ class ItemServiceImpl
         val listItemEntity = itemDao.getAll()
         val listShortItemDto = ArrayList<ItemShortDto>()
 
-        for (item in listItemEntity){
-            val fileEntity =  fileDao.getByItemId(item.id!!)
+        for (item in listItemEntity) {
+            val fileEntity = fileDao.getByItemId(item.id!!)
             val itemShortDto = item.toItemShortDto(fileId = fileEntity.id!!)
             listShortItemDto.add(itemShortDto)
         }
@@ -42,6 +43,19 @@ class ItemServiceImpl
         val itemEntity = itemDao.getById(itemId)
         itemEntity.update(req)
         itemDao.update(itemEntity)
+    }
+
+    override fun getByCategory(categoryName: String, userId: Long): ItemShortListDto? {
+        val itemList = itemDao.getByCategory(categoryName)
+        val listItemDto = ArrayList<ItemShortDto>()
+        if (itemList != null) {
+            for (item in itemList) {
+                val fileEntity = fileDao.getByItemId(item.id!!)
+                val shortItemDto = item.toItemShortDto(fileId = fileEntity.id!!)
+                listItemDto.add(shortItemDto)
+            }
+        }
+        return ItemShortListDto(listItemDto)
     }
 
 

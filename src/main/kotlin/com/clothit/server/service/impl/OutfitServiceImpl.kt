@@ -78,6 +78,18 @@ class OutfitServiceImpl(
 
     }
 
+    override fun find(name: String, userId: Long): OutfitShortListDto {
+        val listOutfitEntity = outfitDao.findByName(name)
+        val listShortOutfitDto = ArrayList<OutfitShortDto>()
+        for( outfit in listOutfitEntity){
+            val file = outfit.id?.let { fileDao.getByOutfitId(it) }
+            if (file != null) {
+                listShortOutfitDto.add(outfit.toShortOutfitDto(file))
+            }
+        }
+        return OutfitShortListDto(listShortOutfitDto)
+    }
+
 
     private fun checkIfItemExists(itemId: Int) : Boolean{
         return itemDao.checkIfExistsById(itemId)

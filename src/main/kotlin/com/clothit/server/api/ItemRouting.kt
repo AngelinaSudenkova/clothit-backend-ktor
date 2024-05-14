@@ -29,5 +29,13 @@ fun Application.itemRoutingConfigure() {
             val listShortItems = itemController.get()
             call.respond(listShortItems.toString())
         }
+
+        get("service/clothit/api/v1/item/list/{category}") {
+            val categoryName = call.parameters["category"]
+            if (categoryName != null) {
+                val listShortItems = itemController.getByCategory(categoryName)
+                call.respond(listShortItems.toString())
+            }
+        }
     }
 }

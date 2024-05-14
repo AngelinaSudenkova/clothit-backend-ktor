@@ -16,5 +16,7 @@ interface ItemDao {
 
     fun update(entity: ItemEntity)
 
+    fun getByCategory(category: String): List<ItemEntity>?
+
 
 }

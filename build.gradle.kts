@@ -23,6 +23,8 @@ application {
 
 repositories {
     mavenCentral()
+    maven("https://jitpack.io")
+
 }
 
 dependencies {
@@ -32,6 +34,7 @@ dependencies {
     implementation("io.ktor:ktor-server-content-negotiation:$ktor_version")
     implementation("io.ktor:ktor-serialization-kotlinx-json:$ktor_version")
     implementation("io.ktor:ktor-server-swagger-jvm")
+    implementation("io.ktor:ktor-server-swagger:$ktor_version")
     implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.3.0")
 
     implementation("com.google.dagger:dagger:2.46.1")
@@ -50,6 +53,7 @@ dependencies {
     implementation("org.jetbrains.exposed:exposed-jdbc:$exposedVersion")
     implementation("org.jetbrains.exposed:exposed-java-time:$exposedVersion")
     implementation("org.postgresql:postgresql:$postgresVersion")
+    implementation("dev.forst:ktor-openapi-generator:0.6.1")
 
     testImplementation("io.ktor:ktor-server-tests-jvm")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")

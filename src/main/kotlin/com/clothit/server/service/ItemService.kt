@@ -11,4 +11,6 @@ interface ItemService {
     fun getAll(userId: Long) : ItemShortListDto?
 
     fun updateItem(itemId : Int, req : ItemUpdateReq)
+
+    fun getByCategory(categoryName: String, userId: Long) : ItemShortListDto?
 }

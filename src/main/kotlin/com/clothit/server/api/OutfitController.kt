@@ -34,5 +34,9 @@ class OutfitController(private val outfitService: OutfitService =
         outfitService.update(outfitId, updateReq)
     }
 
+    fun find(name : String) : OutfitShortListDto? {
+        return outfitService.find(name, 1)
+    }
+
 }
 

@@ -31,6 +31,7 @@ fun Application.corsConfigure()
         allowHeader(HttpHeaders.Authorization)
         allowMethod(HttpMethod.Options)
         allowMethod(HttpMethod.Put)
+        allowMethod(HttpMethod.Get)
         allowMethod(HttpMethod.Patch)
         allowMethod(HttpMethod.Delete)
     }

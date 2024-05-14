@@ -11,4 +11,6 @@ interface OutfitDao {
     fun getAll(): List<OutfitEntity>
 
     fun update(entity: OutfitEntity)
+
+    fun findByName(name: String): List<OutfitEntity>
 }

@@ -13,4 +13,6 @@ interface OutfitService {
     fun getOneById(userId: Long, outfitId: Int) : OutfitShortDto
 
     fun update(outfitId : Int, req: OutfitUpdateReq)
+
+    fun find(name : String, userId : Long) : OutfitShortListDto
 }

@@ -34,5 +34,15 @@ fun Application.outfitRoutingConfigure() {
             call.respond(HttpStatusCode.OK, "Updated")
             return@put
         }
+
+        get("service/clothit/api/v1/outfit/find/{outfitName}") {
+            val outfitName = call.parameters["outfitName"]
+            outfitName?.let {
+                val shortOutfit = outfitController.find(outfitName)
+                call.respond(shortOutfit.toString())
+            }
+
+
+        }
     }
 }
