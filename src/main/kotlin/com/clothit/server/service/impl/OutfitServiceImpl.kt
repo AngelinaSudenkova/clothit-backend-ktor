@@ -58,28 +58,31 @@ class OutfitServiceImpl(
     }
 
     override fun update(outfitId: Int, req: OutfitUpdateReq) {
-        val oldOutfitEntity = outfitDao.getById(outfitId)
-        oldOutfitEntity.update(req)
-        outfitDao.update(oldOutfitEntity)
-        val itemsId = req.itemsId
-        val analysisObj = analysisItems(outfitId, itemsId)
-        analysisObj.tie.forEach { itemId ->
-            itemsToOutfitsDao.save(outfitId, itemId)
-        }
-        analysisObj.delete.forEach { itemsToOutfitsDao.delete(outfitId,it)
-        }
-        fileDao.delete(outfitId)
-        val newItems = itemsToOutfitsDao.getItemsIdByOutfitId(outfitId)
-        for(item in newItems) {
-            val fileEntityItem = fileDao.getById(item)
-            val fileEntityOutfit = createOutfitFileEntity(fileEntityItem, oldOutfitEntity)
-            fileDao.save(fileEntityOutfit)
+        transaction {
+            val oldOutfitEntity = outfitDao.getById(outfitId)
+            oldOutfitEntity.update(req)
+            outfitDao.update(oldOutfitEntity)
+            val itemsId = req.itemsId
+            val analysisObj = analysisItems(outfitId, itemsId)
+            analysisObj.tie.forEach { itemId ->
+                itemsToOutfitsDao.save(outfitId, itemId)
+            }
+            analysisObj.delete.forEach {
+                itemsToOutfitsDao.delete(outfitId, it)
+            }
+            fileDao.deleteAllByOutfitId(outfitId)
+            val newItems = itemsToOutfitsDao.getItemsIdByOutfitId(outfitId)
+            for (item in newItems) {
+                val fileEntityItem = fileDao.getById(item)
+                val fileEntityOutfit = createOutfitFileEntity(fileEntityItem, oldOutfitEntity)
+                fileDao.save(fileEntityOutfit)
+            }
         }
 
     }
 
     override fun find(name: String, userId: Long): OutfitShortListDto {
-        val listOutfitEntity = outfitDao.findByName(name)
+        val listOutfitEntity = outfitDao.searchByWord(name)
         val listShortOutfitDto = ArrayList<OutfitShortDto>()
         for( outfit in listOutfitEntity){
             val file = outfit.id?.let { fileDao.getByOutfitId(it) }
@@ -109,25 +112,16 @@ class OutfitServiceImpl(
     )
 
     fun analysisItems(outfitId: Int,  itemsId : List<Int>) : OutfitItemsAnalysisObj{
-        var deletedIds: MutableList<Int> = itemsToOutfitsDao.getItemsIdByOutfitId(outfitId).toMutableList()
-        val addingItems : MutableList<Int> = mutableListOf()
-        for(item in itemsId){
-            if(!deletedIds.contains(item)){
-                addingItems.add(item)
-            }
-        }
+        var deletedIds: MutableSet<Int> = itemsToOutfitsDao
+            .getItemsIdByOutfitId(outfitId).toMutableSet()
 
-        val itemsIds: List<Int> = itemsId
-        val iterator = deletedIds.iterator()
-        while (iterator.hasNext()) {
-            val item = iterator.next()
-            if (itemsIds.contains(item)) {
-                iterator.remove()
-            }
+        val addingItems : MutableSet<Int> =  itemsId.toHashSet()
 
-        }
+        val commonIds = deletedIds.intersect(itemsId)
+        deletedIds.removeAll(commonIds)
+        addingItems.removeAll(commonIds)
 
-        return OutfitItemsAnalysisObj(addingItems, deletedIds)
+        return OutfitItemsAnalysisObj(addingItems.toList(), deletedIds.toList())
     }
 
 }

@@ -16,5 +16,5 @@ interface FileDao {
 
     fun update(entity: FileEntity)
 
-    fun delete(outfitId: Int)
+    fun deleteAllByOutfitId(outfitId: Int)
 }

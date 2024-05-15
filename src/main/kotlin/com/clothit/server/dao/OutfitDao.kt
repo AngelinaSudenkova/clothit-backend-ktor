@@ -12,5 +12,5 @@ interface OutfitDao {
 
     fun update(entity: OutfitEntity)
 
-    fun findByName(name: String): List<OutfitEntity>
+    fun searchByWord(word: String): List<OutfitEntity>
 }

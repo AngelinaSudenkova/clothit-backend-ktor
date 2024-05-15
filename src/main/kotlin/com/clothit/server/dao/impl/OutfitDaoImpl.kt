@@ -67,9 +67,9 @@ object OutfitDaoImpl: OutfitDao {
         }
     }
 
-    override fun findByName(name: String): List<OutfitEntity> {
+    override fun searchByWord(word: String): List<OutfitEntity> {
             return transaction {
-                OutfitTable.selectAll().where{OutfitTable.name like "%$name%"}.map {
+                OutfitTable.selectAll().where{OutfitTable.name like "%$word%"}.map {
                     OutfitEntity(
                         it[OutfitTable.id],
                         it[OutfitTable.season].let { t -> OutfitSeason.valueOf(t) },
