@@ -10,4 +10,6 @@ object ItemTable : Table("items") {
     val category = varchar("category", 15)
     val description = varchar("description", 255).nullable()
     val timeCreated = timestamp("time_created")
+
+    override val primaryKey = PrimaryKey(id)
 }

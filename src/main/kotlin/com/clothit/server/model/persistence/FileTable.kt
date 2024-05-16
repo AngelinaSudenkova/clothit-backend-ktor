@@ -12,5 +12,5 @@ object FileTable: Table("files") {
     val timeCreated = timestamp("time_created")
     val timeUpdated = timestamp("time_updated")
 
-    override val primaryKey =  PrimaryKey(id)
+    override val primaryKey = PrimaryKey(id)
 }

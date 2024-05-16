@@ -4,6 +4,7 @@ val kotlin_version: String by project
 val logback_version: String by project
 val exposedVersion: String by project
 val postgresVersion: String by project
+val h2_version: String by project
 
 plugins {
     kotlin("jvm") version "1.9.23"
@@ -54,8 +55,14 @@ dependencies {
     implementation("org.jetbrains.exposed:exposed-java-time:$exposedVersion")
     implementation("org.postgresql:postgresql:$postgresVersion")
     implementation("dev.forst:ktor-openapi-generator:0.6.1")
-
+    implementation("io.ktor:ktor-client-core:2.0.3")
+    implementation("io.ktor:ktor-client-cio:2.0.3")
+    implementation("com.h2database:h2:$h2_version")
+    implementation("io.ktor:ktor-client-content-negotiation:2.0.3")
     testImplementation("io.ktor:ktor-server-tests-jvm")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
     testImplementation("io.ktor:ktor-server-test-host-jvm:2.3.9")
+    testImplementation("org.jetbrains.kotlin:kotlin-test:$kotlin_version")
+    testImplementation("io.ktor:ktor-server-test-host:$ktor_version")
+
 }
