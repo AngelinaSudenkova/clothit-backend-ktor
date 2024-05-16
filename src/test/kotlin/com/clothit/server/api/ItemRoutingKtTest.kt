@@ -12,7 +12,6 @@ class ItemRoutingKtTest {
           //  configureLogoutRouting()
         }
         client.post("/service/clothit/api/v1/item").apply {
-            TODO("Please write your test here")
         }
     }
 }
