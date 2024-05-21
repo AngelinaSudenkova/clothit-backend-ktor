@@ -1,5 +1,6 @@
 package com.clothit.server.service.impl
 
+import com.clothit.error.CustomException
 import com.clothit.server.dao.FileDao
 import com.clothit.server.model.entity.FileEntity
 import com.clothit.server.service.FileService
@@ -14,42 +15,51 @@ class FileServiceImpl(private val fileDao: FileDao) : FileService {
 
     override suspend fun save(file: MultiPartData): Int {
         var fileId = -1
-        withContext(Dispatchers.IO) {
-            file.forEachPart { part ->
-                if (part is PartData.FileItem) {
-                    val inputStream: InputStream = part.streamProvider()
-                    val byteArray = inputStream.readBytes()
-                    FileUtil.saveToFile(part.originalFileName!!, byteArray)
-                    val fileEntity = FileEntity(
-                        name = part.originalFileName ?: "Unknown",
-                        size = byteArray.size.toLong(),
-                    )
-                    fileId = fileDao.save(fileEntity)
+        try {
+            withContext(Dispatchers.IO) {
+                file.forEachPart { part ->
+                    if (part is PartData.FileItem) {
+                        val inputStream: InputStream = part.streamProvider()
+                        val byteArray = inputStream.readBytes()
+                        FileUtil.saveToFile(part.originalFileName!!, byteArray)
+                        val fileEntity = FileEntity(
+                            name = part.originalFileName ?: "Unknown",
+                            size = byteArray.size.toLong(),
+                        )
+                        fileId = fileDao.save(fileEntity)
 
+                    }
                 }
             }
+            return fileId
+        } catch (e: CustomException.FileCanNotBeSavedException) {
+            throw CustomException.FileCanNotBeSavedException()
         }
-        return fileId
     }
 
     override fun getById(fileId: Int): ByteArray {
-        val fileEntity = fileDao.getById(fileId)
-        val fileName = fileEntity.name
-        return FileUtil.readFromFile(fileName)
+        try {
+            val fileEntity = fileDao.getById(fileId)
+            val fileName = fileEntity.name
+            return FileUtil.readFromFile(fileName)
+        } catch (e: Exception) {
+           throw CustomException.FileNotFoundException()
+        }
     }
 
     override suspend fun update(fileId: Int, newFile: MultiPartData) {
-        val oldFileEntity = fileDao.getById(fileId)
-        val oldFileName = oldFileEntity.name
-        val oldByteArray = FileUtil.readFromFile(oldFileName)
+        try {
+            val oldFileEntity = fileDao.getById(fileId)
+            val oldFileName = oldFileEntity.name
+            val oldByteArray = FileUtil.readFromFile(oldFileName)
 
-        var newByteArray: ByteArray? = null
-        withContext(Dispatchers.IO) {
-            newFile.forEachPart { part ->
-                if (part is PartData.FileItem) {
-                    val inputStream: InputStream = part.streamProvider()
-                    newByteArray = inputStream.readBytes()
-                    if (!oldByteArray.contentEquals(newByteArray)) {
+            var newByteArray: ByteArray? = null
+            withContext(Dispatchers.IO) {
+                newFile.forEachPart { part ->
+                    if (part is PartData.FileItem) {
+                        val inputStream: InputStream = part.streamProvider()
+                        newByteArray = inputStream.readBytes()
+                        if (!oldByteArray.contentEquals(newByteArray)) {
                             FileUtil.saveToFile(part.originalFileName!!, newByteArray!!)
                             val fileEntity = FileEntity(
                                 id = oldFileEntity.id!!,
@@ -64,6 +74,9 @@ class FileServiceImpl(private val fileDao: FileDao) : FileService {
                     }
                 }
             }
+        } catch (e: Exception) {
+            throw CustomException.UpdateException()
         }
     }
+}
 

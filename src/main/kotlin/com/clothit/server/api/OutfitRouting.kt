@@ -1,6 +1,7 @@
 package com.clothit.server.api
 
 import com.clothit.server.api.req.OutfitCreateReq
+import com.clothit.server.api.req.OutfitFindReq
 import com.clothit.server.api.req.OutfitUpdateReq
 import io.ktor.http.*
 import io.ktor.server.application.*
@@ -35,8 +36,8 @@ fun Application.outfitRoutingConfigure() {
             return@put
         }
 
-        get("service/clothit/api/v1/outfit/find/{outfitName}") {
-            val outfitName = call.parameters["outfitName"]
+        get("service/clothit/api/v1/outfit/find") {
+            val outfitName = call.receive<OutfitFindReq>().name
             outfitName?.let {
                 val shortOutfit = outfitController.find(outfitName)
                 call.respond(shortOutfit.toString())

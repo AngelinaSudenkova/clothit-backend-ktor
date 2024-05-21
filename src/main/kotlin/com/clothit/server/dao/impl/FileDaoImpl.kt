@@ -1,5 +1,6 @@
 package com.clothit.server.dao.impl
 
+import com.clothit.error.CustomException
 import com.clothit.server.dao.FileDao
 import com.clothit.server.model.entity.FileEntity
 import com.clothit.server.model.entity.ItemEntity
@@ -30,6 +31,7 @@ object FileDaoImpl : FileDao {
             }
             id = insertResult[FileTable.id]
         }
+        if (id == -1) throw CustomException.FileCanNotBeSavedException()
         return id
     }
 
@@ -57,7 +59,7 @@ object FileDaoImpl : FileDao {
                 it[FileTable.timeCreated],
                 it[FileTable.timeUpdated]
             )
-        } ?: throw NoSuchElementException("File with id $id not found")
+        } ?: throw CustomException.FileNotFoundException()
     }
 
     override fun getAllByItemId(itemId: Int): List<FileEntity> {
@@ -104,7 +106,7 @@ object FileDaoImpl : FileDao {
                 it[FileTable.timeCreated],
                 it[FileTable.timeUpdated]
             )
-        } ?: throw NoSuchElementException("File with item id $itemId not found")
+        }  ?: throw CustomException.FileNotFoundException()
     }
 
     override fun getByOutfitId(outfitId: Int): List<FileEntity> {
