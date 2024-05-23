@@ -1,6 +1,7 @@
 package com.clothit.server.service.impl
 
-import com.clothit.error.CustomException
+import com.clothit.error.ErrorCustomMessage
+import com.clothit.error.ErrorTypes
 import com.clothit.server.api.dto.OutfitShortDto
 import com.clothit.server.api.dto.OutfitShortListDto
 import com.clothit.server.api.req.OutfitCreateReq
@@ -41,7 +42,7 @@ class OutfitServiceImpl(
                 outfitEntityId
             }
         } catch (e: Exception) {
-            throw CustomException.OutfitCanNotBeSavedException()
+            throw ErrorCustomMessage(e, ErrorTypes.INTERNAL_SERVER_ERROR).toException()
         }
     }
 
@@ -62,7 +63,7 @@ class OutfitServiceImpl(
             val fileEntities = fileDao.getByOutfitId(outfitId)
             outfitEntity.toShortOutfitDto(fileEntities)
         } catch (e: Exception) {
-            throw CustomException.OutfitNotFoundException()
+            throw  ErrorCustomMessage(e, ErrorTypes.NOT_FOUND_EXCEPTION).toException()
         }
     }
 
@@ -90,7 +91,7 @@ class OutfitServiceImpl(
                 }
             }
         } catch (e: Exception) {
-            throw CustomException.UpdateException()
+            throw  ErrorCustomMessage(e, ErrorTypes.INTERNAL_SERVER_ERROR).toException()
         }
     }
 
@@ -106,7 +107,7 @@ class OutfitServiceImpl(
             }
             return OutfitShortListDto(listShortOutfitDto)
         } catch (e: Exception) {
-            throw CustomException.OutfitNotFoundException()
+            throw ErrorCustomMessage(e, ErrorTypes.NOT_FOUND_EXCEPTION).toException()
         }
     }
 
