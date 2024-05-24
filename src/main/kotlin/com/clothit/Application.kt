@@ -2,14 +2,14 @@ package com.clothit
 
 
 
-import com.clothit.config.configureRouting
-import com.clothit.config.corsConfigure
-import com.clothit.config.serializationConfigure
-import com.clothit.config.swaggerConfigure
+import com.clothit.config.*
 import com.clothit.server.api.fileRoutingConfigure
 import com.clothit.server.api.itemRoutingConfigure
 import com.clothit.server.api.outfitRoutingConfigure
 import com.clothit.server.api.userRoutingConfigure
+import com.clothit.server.dao.impl.UserDaoImpl
+import com.clothit.server.service.impl.JwtServiceImpl
+import com.clothit.server.service.impl.UserServiceImpl
 import io.ktor.server.application.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
@@ -42,6 +42,7 @@ fun Application.module() {
 
     corsConfigure()
 
+    configureSecurity(jwtService = JwtServiceImpl(userService = UserServiceImpl(userDao = UserDaoImpl)))
 
     swaggerConfigure()
 

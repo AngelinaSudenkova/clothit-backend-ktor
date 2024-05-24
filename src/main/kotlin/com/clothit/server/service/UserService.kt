@@ -2,6 +2,7 @@ package com.clothit.server.service
 
 import com.clothit.server.api.dto.UserDto
 import com.clothit.server.api.req.UserRegisterReq
+import com.clothit.server.model.entity.UserEntity
 import java.util.*
 
 interface UserService {
@@ -11,4 +12,5 @@ interface UserService {
   //  fun updateUser(userId: UUID, req: UserUpdateReq)
     fun deleteUser(userId: UUID)
     fun searchByUsername(name: String): List<UserDto>
+    fun searchByEmail(email: String): UserEntity?
 }

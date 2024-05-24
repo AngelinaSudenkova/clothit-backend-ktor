@@ -30,6 +30,7 @@ repositories {
 
 dependencies {
     implementation("io.ktor:ktor-server-core-jvm")
+    implementation("io.ktor:ktor-server-core")
     implementation("io.ktor:ktor-server-websockets-jvm")
     implementation("io.ktor:ktor-server-content-negotiation-jvm")
     implementation("io.ktor:ktor-server-content-negotiation:$ktor_version")
@@ -44,9 +45,12 @@ dependencies {
     implementation("io.ktor:ktor-server-cors:$ktor_version")
     implementation("io.ktor:ktor-server-openapi:$ktor_version")
 
+    implementation("io.ktor:ktor-server-auth:$ktor_version")
+    implementation("io.ktor:ktor-server-auth-jwt:$ktor_version")
 
     implementation("io.ktor:ktor-server-sessions-jvm")
     implementation("io.ktor:ktor-server-netty-jvm")
+    implementation("io.ktor:ktor-server-netty")
     implementation("ch.qos.logback:logback-classic:$logback_version")
     implementation("org.jetbrains.exposed:exposed-core:$exposedVersion")
     implementation("org.jetbrains.exposed:exposed-crypt:$exposedVersion")
@@ -64,8 +68,7 @@ dependencies {
     testImplementation("io.ktor:ktor-server-test-host-jvm:2.3.9")
     testImplementation("org.jetbrains.kotlin:kotlin-test:$kotlin_version")
     testImplementation("io.ktor:ktor-server-test-host:$ktor_version")
-//    testImplementation("org.junit.jupiter:junit-jupiter-api:5.7.2")
-//    testImplementation("org.junit.jupiter:junit-jupiter-engine:5.7.2")
+
     testImplementation("io.mockk:mockk:1.12.0")
     testImplementation("com.github.hyperskill:hs-test:master-SNAPSHOT")
 
