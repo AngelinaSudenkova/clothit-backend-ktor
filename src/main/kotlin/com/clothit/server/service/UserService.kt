@@ -6,7 +6,7 @@ import com.clothit.server.model.entity.UserEntity
 import java.util.*
 
 interface UserService {
-    fun registerUser(userRegisterReq: UserRegisterReq): UUID
+    fun registerUser(userRegisterReq: UserRegisterReq): UUID?
     fun authenticateUser(email: String, password: String): UserDto?
     fun getUser(userId: UUID): UserDto?
   //  fun updateUser(userId: UUID, req: UserUpdateReq)

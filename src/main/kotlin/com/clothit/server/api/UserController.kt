@@ -3,26 +3,36 @@ package com.clothit.server.api
 import com.clothit.server.api.dto.UserDto
 import com.clothit.server.api.req.UserLoginReq
 import com.clothit.server.api.req.UserRegisterReq
+import com.clothit.server.service.JwtService
 import com.clothit.server.service.UserService
 import java.util.*
 
-class UserController(private val userService: UserService) {
+class UserController(
+    private val userService: UserService,
+    private val tokenService: JwtService
+) {
 
-    fun register(req: UserRegisterReq): UUID {
+    fun register(req: UserRegisterReq): UUID? {
         val userId = userService.registerUser(req)
         return userId
     }
 
     fun login(req: UserLoginReq): UserDto? {
         val userDto = userService.authenticateUser(req.email, req.password)
-        // Optionally, you might want to generate and return a token here
-        return userDto
+        if(userDto != null){
+            return userDto
+        }
+        return null
     }
 
     fun get(userId: UUID): UserDto? {
         val userDto = userService.getUser(userId)
         // TODO: Add authorization logic here
         return userDto
+    }
+
+    fun logout(token: String) {
+        tokenService.deleteToken(token)
     }
 
 //    fun update(userId: UUID, req: UserUpdateReq) {

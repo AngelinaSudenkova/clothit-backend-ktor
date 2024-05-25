@@ -10,7 +10,8 @@ import com.clothit.util.PasswordUtil
 import java.util.*
 
 class UserServiceImpl(private val userDao: UserDao) : UserService {
-    override fun registerUser(userRegisterReq: UserRegisterReq): UUID {
+    override fun registerUser(userRegisterReq: UserRegisterReq): UUID? {
+        if(userDao.checkIfExists(userRegisterReq.email)) {return null}
         val hashedPassword = PasswordUtil.hashPassword(userRegisterReq.password)
         val userEntity = UserEntity(
             id = null,
@@ -25,21 +26,14 @@ class UserServiceImpl(private val userDao: UserDao) : UserService {
     }
 
     override fun authenticateUser(email: String, password: String): UserDto? {
-//        // Implement authentication logic here
-//        // You might want to hash the password before comparing
-//        val userEntity = userDao.getByEmail(email)
-//        if (userEntity != null && userEntity.passwordHash == password) {
-//            // Authentication successful, return the user details
-//            return UserDto(
-//                id = userEntity.id,
-//                email = userEntity.email,
-//                username = userEntity.username,
-//                registeredDate = userEntity.registeredDate,
-//                lastLoginDate = userEntity.lastLoginDate,
-//                isActive = userEntity.isActive
-//            )
-//`        }
-//        // Authentication failed
+
+        val userEntity = userDao.searchByEmail(email)
+        if (userEntity != null &&  PasswordUtil.checkPassword(userEntity.passwordHash, password)) {
+            return UserDto(
+                id = userEntity.id!!,
+                username = userEntity.username,
+            )
+        }
         return null
     }
 

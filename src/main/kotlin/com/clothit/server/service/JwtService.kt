@@ -8,4 +8,5 @@ interface JwtService {
     fun createToken(loginReq: UserLoginReq): String?
     fun validateToken(credential: JWTCredential) : JWTPrincipal?
     fun createToken(registerReq: UserRegisterReq): String?
+    fun deleteToken(token: String)
 }

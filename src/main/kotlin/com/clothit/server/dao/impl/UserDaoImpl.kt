@@ -64,6 +64,13 @@ object UserDaoImpl : UserDao {
         }
     }
 
+    override fun checkIfExists(email: String): Boolean {
+        return transaction {
+            UserTable.select { UserTable.email eq email }
+                .count() > 0
+        }
+    }
+
     override fun update(entity: UserEntity): String {
         transaction {
             UserTable.update({ UserTable.id eq entity.id!! }) {

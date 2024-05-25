@@ -41,4 +41,10 @@ object TokenDaoImpl : TokenDao {
             TokenTable.deleteWhere { TokenTable.userId eq userId }
         }
     }
+
+    override fun deleteToken(token: String) {
+        transaction{
+            TokenTable.deleteWhere { TokenTable.token eq token }
+        }
+    }
 }

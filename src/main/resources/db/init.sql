@@ -68,7 +68,7 @@ CREATE TABLE IF NOT EXISTS users
 
 CREATE TABLE IF NOT EXISTS tokens
 (
-    id      INT          NOT NULL,
+    id      SERIAL          NOT NULL,
     user_id uuid NOT NULL,
     token   VARCHAR(255) NOT NULL
 );
@@ -76,8 +76,6 @@ CREATE TABLE IF NOT EXISTS tokens
 ALTER TABLE tokens
     ADD CONSTRAINT fk_users
         FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE ;
-
-
 
 
 

@@ -10,5 +10,6 @@ interface UserDao {
     fun delete(id: UUID) : Boolean
     fun searchByUsername(name: String): List<UserEntity>
     fun searchByEmail(email: String) : UserEntity?
+    fun checkIfExists(email: String): Boolean
 
 }

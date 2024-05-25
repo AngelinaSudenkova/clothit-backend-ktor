@@ -7,5 +7,6 @@ interface TokenDao {
     fun save(token: TokenEntity): Int
     fun getTokenByUserId(userId: UUID): TokenEntity?
     fun deleteTokenByUserId(userId: UUID)
+    fun deleteToken(token: String)
 
 }

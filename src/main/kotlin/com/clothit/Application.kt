@@ -7,6 +7,7 @@ import com.clothit.server.api.fileRoutingConfigure
 import com.clothit.server.api.itemRoutingConfigure
 import com.clothit.server.api.outfitRoutingConfigure
 import com.clothit.server.api.userRoutingConfigure
+import com.clothit.server.dao.impl.TokenDaoImpl
 import com.clothit.server.dao.impl.UserDaoImpl
 import com.clothit.server.service.impl.JwtServiceImpl
 import com.clothit.server.service.impl.UserServiceImpl
@@ -42,7 +43,7 @@ fun Application.module() {
 
     corsConfigure()
 
-    configureSecurity(jwtService = JwtServiceImpl(userService = UserServiceImpl(userDao = UserDaoImpl)))
+    configureSecurity(jwtService = JwtServiceImpl(userService = UserServiceImpl(userDao = UserDaoImpl), tokenDao = TokenDaoImpl))
 
     swaggerConfigure()
 
