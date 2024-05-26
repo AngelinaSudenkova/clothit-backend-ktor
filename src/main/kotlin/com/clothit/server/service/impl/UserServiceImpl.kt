@@ -3,13 +3,15 @@ package com.clothit.server.service.impl
 import com.clothit.server.api.dto.UserDto
 import com.clothit.server.api.req.UserRegisterReq
 import com.clothit.server.dao.UserDao
+import com.clothit.server.dao.impl.UserDaoImpl
 import com.clothit.server.model.entity.UserEntity
 import com.clothit.server.service.UserService
 import com.clothit.util.DateTimeUtil
 import com.clothit.util.PasswordUtil
 import java.util.*
 
-class UserServiceImpl(private val userDao: UserDao) : UserService {
+class UserServiceImpl(private val userDao: UserDao = UserDaoImpl) : UserService {
+
     override fun registerUser(userRegisterReq: UserRegisterReq): UUID? {
         if(userDao.checkIfExists(userRegisterReq.email)) {return null}
         val hashedPassword = PasswordUtil.hashPassword(userRegisterReq.password)
@@ -28,7 +30,7 @@ class UserServiceImpl(private val userDao: UserDao) : UserService {
     override fun authenticateUser(email: String, password: String): UserDto? {
 
         val userEntity = userDao.searchByEmail(email)
-        if (userEntity != null &&  PasswordUtil.checkPassword(userEntity.passwordHash, password)) {
+        if (userEntity != null &&  PasswordUtil.checkPassword(password, userEntity.passwordHash)) {
             return UserDto(
                 id = userEntity.id!!,
                 username = userEntity.username,

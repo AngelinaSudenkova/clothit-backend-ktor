@@ -6,6 +6,7 @@ import com.auth0.jwt.algorithms.Algorithm
 import com.clothit.server.api.req.UserLoginReq
 import com.clothit.server.api.req.UserRegisterReq
 import com.clothit.server.dao.TokenDao
+import com.clothit.server.dao.impl.TokenDaoImpl
 import com.clothit.server.model.entity.TokenEntity
 import com.clothit.server.model.entity.UserEntity
 import com.clothit.server.service.JwtService
@@ -16,8 +17,8 @@ import io.ktor.server.auth.jwt.*
 import java.util.*
 
 class JwtServiceImpl(
-    private val userService: UserService,
-    private val tokenDao: TokenDao
+    private val userService: UserService = UserServiceImpl(),
+    private val tokenDao: TokenDao = TokenDaoImpl
 ) : JwtService {
 
     val config = ConfigFactory.load()
