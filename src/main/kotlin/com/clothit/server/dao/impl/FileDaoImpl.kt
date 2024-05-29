@@ -1,6 +1,5 @@
 package com.clothit.server.dao.impl
 
-import com.clothit.error.CustomException
 import com.clothit.server.dao.FileDao
 import com.clothit.server.model.entity.FileEntity
 import com.clothit.server.model.entity.ItemEntity
@@ -18,8 +17,8 @@ import org.jetbrains.exposed.sql.transactions.transaction
 
 object FileDaoImpl : FileDao {
 
-    override fun save(entity: FileEntity): Int {
-        var id = -1
+    override fun save(entity: FileEntity): Int? {
+        var id: Int? = null
         transaction {
             val insertResult = FileTable.insert {
                 it[name] = entity.name
@@ -31,11 +30,10 @@ object FileDaoImpl : FileDao {
             }
             id = insertResult[FileTable.id]
         }
-        if (id == -1) throw CustomException.FileCanNotBeSavedException()
         return id
     }
 
-    override fun getById(id: Int): FileEntity {
+    override fun getById(id: Int): FileEntity? {
         var result: ResultRow? = null
         transaction {
             result = (FileTable leftJoin ItemTable).selectAll()
@@ -59,7 +57,7 @@ object FileDaoImpl : FileDao {
                 it[FileTable.timeCreated],
                 it[FileTable.timeUpdated]
             )
-        } ?: throw CustomException.FileNotFoundException()
+        }
     }
 
     override fun getAllByItemId(itemId: Int): List<FileEntity> {
@@ -85,7 +83,7 @@ object FileDaoImpl : FileDao {
         }
     }
 
-    override fun getByItemId(itemId: Int): FileEntity {
+    override fun getByItemId(itemId: Int): FileEntity? {
         val result = transaction {
             (FileTable innerJoin ItemTable)
                 .select { FileTable.item_id eq ItemTable.id and (FileTable.item_id eq itemId) }
@@ -106,7 +104,7 @@ object FileDaoImpl : FileDao {
                 it[FileTable.timeCreated],
                 it[FileTable.timeUpdated]
             )
-        }  ?: throw CustomException.FileNotFoundException()
+        }
     }
 
     override fun getByOutfitId(outfitId: Int): List<FileEntity> {

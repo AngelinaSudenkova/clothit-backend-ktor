@@ -3,6 +3,8 @@ package com.clothit.server.service.impl
 import com.auth0.jwt.JWT
 import com.auth0.jwt.JWTVerifier
 import com.auth0.jwt.algorithms.Algorithm
+import com.clothit.error.ErrorCustomMessage
+import com.clothit.error.ErrorTypes
 import com.clothit.server.api.req.UserLoginReq
 import com.clothit.server.api.req.UserRegisterReq
 import com.clothit.server.dao.TokenDao
@@ -36,38 +38,29 @@ class JwtServiceImpl(
         .build()
 
 
-    override fun createToken(loginReq: UserLoginReq): String? {
-        val foundUser: UserEntity? = userService.searchByEmail(loginReq.email)
-        if (foundUser != null && PasswordUtil.checkPassword(loginReq.password, foundUser.passwordHash)) {
-            val token = JWT.create()
-                .withAudience(audience)
-                .withIssuer(issuer)
-                .withClaim("email", loginReq.email)
-                .withExpiresAt(Date(System.currentTimeMillis() + 3_600_000))
-                .sign(Algorithm.HMAC256(secret))
-            tokenDao.save(
-                TokenEntity(
-                    token = token,
-                    userId = foundUser.id!!
-                )
-            )
-            return token
+    override fun createToken(loginReq: UserLoginReq): String {
+        val foundUser: UserEntity = userService.getByEmail(loginReq.email)
 
-        } else {
-            return null
+        if (!PasswordUtil.checkPassword(loginReq.password, foundUser.passwordHash)) {
+            throw ErrorCustomMessage(ErrorTypes.NOT_AUTHORIZED).toException()
         }
+
+        val token = generateToken(secret = secret, issuer = issuer,
+            audience = audience, email = loginReq.email)
+        tokenDao.save(
+            TokenEntity(
+                token = token,
+                userId = foundUser.id!!
+            )
+        )
+        return token
     }
 
 
-    override fun createToken(registerReq: UserRegisterReq): String? {
-        val foundUser: UserEntity? = userService.searchByEmail(registerReq.email)
-        if (foundUser != null ) {
-            val token = JWT.create()
-                .withAudience(audience)
-                .withIssuer(issuer)
-                .withClaim("email", registerReq.email)
-                .withExpiresAt(Date(System.currentTimeMillis() + 3_600_000))
-                .sign(Algorithm.HMAC256(secret))
+    override fun createToken(registerReq: UserRegisterReq): String {
+        val foundUser: UserEntity = userService.getByEmail(registerReq.email)
+        val token = generateToken(secret = secret, issuer = issuer,
+            audience = audience, email = registerReq.email)
             tokenDao.save(
                 TokenEntity(
                     token = token,
@@ -75,16 +68,12 @@ class JwtServiceImpl(
                 )
             )
             return token
-
-        } else {
-            return null
-        }
     }
 
 
     override fun validateToken(credential: JWTCredential): JWTPrincipal? {
         val email: String? = extractEmail(credential)
-        val foundUser: UserEntity? = email?.let(userService::searchByEmail)
+        val foundUser: UserEntity? = email?.let(userService::getByEmail)
         return foundUser?.let {
             if (audienceMatches(credential))
                 JWTPrincipal(credential.payload)
@@ -105,4 +94,13 @@ class JwtServiceImpl(
 
     private fun extractEmail(credential: JWTCredential): String? =
         credential.payload.getClaim("email").asString()
+}
+
+private fun generateToken(audience : String, issuer: String, secret:String, email:String): String {
+    return JWT.create()
+        .withAudience(audience)
+        .withIssuer(issuer)
+        .withClaim("email", email)
+        .withExpiresAt(Date(System.currentTimeMillis() + 3_600_000))
+        .sign(Algorithm.HMAC256(secret))
 }

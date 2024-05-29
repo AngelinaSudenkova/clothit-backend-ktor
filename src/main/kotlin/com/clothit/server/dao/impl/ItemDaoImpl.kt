@@ -13,8 +13,8 @@ import org.jetbrains.exposed.sql.update
 object ItemDaoImpl : ItemDao {
 
 
-    override fun save(entity: ItemEntity): Int {
-        var id = -1
+    override fun save(entity: ItemEntity): Int? {
+        var id: Int? = null
         transaction {
             val insertResult = ItemTable.insert {
                 it[category] = entity.category!!.name
@@ -26,7 +26,7 @@ object ItemDaoImpl : ItemDao {
         return id
     }
 
-    override fun getById(id: Int): ItemEntity {
+    override fun getById(id: Int): ItemEntity? {
 
          val result = transaction {  ItemTable.selectAll().where { ItemTable.id eq id }.singleOrNull()}
 
@@ -37,7 +37,7 @@ object ItemDaoImpl : ItemDao {
                 it[ItemTable.description],
                 it[ItemTable.timeCreated]
             )
-        }} ?: throw NoSuchElementException("Item with id $id not found") //TODO return custom exception
+        }}
     }
 
     override fun getByIds(ids: List<Int>): List<ItemEntity> {
@@ -92,7 +92,7 @@ object ItemDaoImpl : ItemDao {
 
     }
 
-    override fun getByCategory(category: String): List<ItemEntity>? {
+    override fun getByCategory(category: String): List<ItemEntity> {
         return transaction {
             ItemTable.select { ItemTable.category eq category }.map {
                 ItemEntity(

@@ -20,12 +20,12 @@ class OutfitController(private val outfitService: OutfitService =
         return IdDto(id)
     }
 
-    fun get() : OutfitShortListDto? {
+    fun get() : OutfitShortListDto {
         val outfitShortListDto = outfitService.getAll(1)
         return outfitShortListDto
     }
 
-    fun get(outfitId: Int) : OutfitShortDto? {
+    fun get(outfitId: Int) : OutfitShortDto {
         val outfitShortDto = outfitService.getOneById(1, outfitId)
         return outfitShortDto
     }
@@ -34,7 +34,7 @@ class OutfitController(private val outfitService: OutfitService =
         outfitService.update(outfitId, updateReq)
     }
 
-    fun find(name : String) : OutfitShortListDto? {
+    fun find(name : String) : OutfitShortListDto {
         return outfitService.find(name, 1)
     }
 

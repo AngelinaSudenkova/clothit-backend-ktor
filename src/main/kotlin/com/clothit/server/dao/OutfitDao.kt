@@ -4,9 +4,9 @@ import com.clothit.server.model.entity.OutfitEntity
 
 interface OutfitDao {
 
-    fun save(entity: OutfitEntity): Int
+    fun save(entity: OutfitEntity): Int?
 
-    fun getById(id: Int): OutfitEntity
+    fun getById(id: Int): OutfitEntity?
 
     fun getAll(): List<OutfitEntity>
 

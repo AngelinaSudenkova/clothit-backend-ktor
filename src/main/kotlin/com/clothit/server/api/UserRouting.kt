@@ -34,7 +34,7 @@ fun Application.userRoutingConfigure() {
             }
         }
 
-        post("service/clothit/api/v1/logout") {
+        delete("service/clothit/api/v1/logout") {
             val req = call.receive<UserLogoutReq>()
             userController.logout(req.token)
             call.respond(HttpStatusCode.OK)

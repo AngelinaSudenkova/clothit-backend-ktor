@@ -10,8 +10,8 @@ import org.jetbrains.exposed.sql.transactions.transaction
 import org.jetbrains.exposed.sql.update
 
 object OutfitDaoImpl: OutfitDao {
-    override fun save(entity: OutfitEntity): Int {
-        var id = -1
+    override fun save(entity: OutfitEntity): Int? {
+        var id :Int? = null
         transaction {
             val insertResult = OutfitTable.insert {
                 it[season] = entity.season.name
@@ -25,7 +25,7 @@ object OutfitDaoImpl: OutfitDao {
         return id
     }
 
-    override fun getById(id: Int): OutfitEntity {
+    override fun getById(id: Int): OutfitEntity? {
         val result = transaction { OutfitTable.selectAll().where { OutfitTable.id eq id }.singleOrNull() }
         return result?.let {
             OutfitEntity(
@@ -36,7 +36,7 @@ object OutfitDaoImpl: OutfitDao {
                 it[OutfitTable.timeCreated],
                 it[OutfitTable.timeUpdated]
             )
-        } ?: throw NoSuchElementException("Outfit with id $id not found")
+        }
     }
 
 

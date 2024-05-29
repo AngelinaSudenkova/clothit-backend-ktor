@@ -1,6 +1,7 @@
 package com.clothit.server.service.impl
 
-import com.clothit.error.CustomException
+import com.clothit.error.ErrorCustomMessage
+import com.clothit.error.ErrorTypes
 import com.clothit.server.api.dto.ItemShortDto
 import com.clothit.server.api.dto.ItemShortListDto
 import com.clothit.server.api.req.ItemCreateReq
@@ -18,27 +19,30 @@ class ItemServiceImpl
 
 
     override fun save(req: ItemCreateReq): Int {
-        try {
-            val itemEntity = ItemEntity(category = req.category, description = req.description)
-            val fileEntity = fileDao.getById(req.fileId)
-            val itemEntityId = itemDao.save(itemEntity)
-            itemEntity.id = itemEntityId
-            fileEntity.item = itemEntity
-            fileDao.update(fileEntity)
-            return itemEntityId
-        } catch (e: Exception) {
-            throw CustomException.ItemCanNotBeSavedException()
 
-        }
+        val itemEntity = ItemEntity(category = req.category, description = req.description)
+        val fileEntity =
+            fileDao.getById(req.fileId) ?: throw ErrorCustomMessage(ErrorTypes.NOT_FOUND_EXCEPTION).toException()
+        val itemEntityId =
+            itemDao.save(itemEntity) ?: throw ErrorCustomMessage(ErrorTypes.NOT_FOUND_EXCEPTION).toException()
 
+        itemEntity.id = itemEntityId
+        fileEntity.item = itemEntity
+        fileDao.update(fileEntity)
+        return itemEntityId
     }
 
-    override fun getAll(userId: Long): ItemShortListDto? {
+    override fun getAll(userId: Long): ItemShortListDto {
         val listItemEntity = itemDao.getAll()
         val listShortItemDto = ArrayList<ItemShortDto>()
+        if (listItemEntity.isEmpty()) {
+            throw ErrorCustomMessage(ErrorTypes.NOT_FOUND_EXCEPTION).toException()
+        }
 
         for (item in listItemEntity) {
             val fileEntity = fileDao.getByItemId(item.id!!)
+                ?: throw ErrorCustomMessage(ErrorTypes.NOT_FOUND_EXCEPTION).toException()
+
             val itemShortDto = item.toItemShortDto(fileId = fileEntity.id!!)
             listShortItemDto.add(itemShortDto)
         }
@@ -46,31 +50,24 @@ class ItemServiceImpl
     }
 
     override fun updateItem(itemId: Int, req: ItemUpdateReq) {
-        try {
-            val itemEntity = itemDao.getById(itemId)
+
+            val itemEntity = itemDao.getById(itemId) ?: throw ErrorCustomMessage(ErrorTypes.NOT_FOUND_EXCEPTION).toException()
             itemEntity.update(req)
             itemDao.update(itemEntity)
-        } catch (e: Exception) {
-            throw CustomException.UpdateException()
-        }
     }
 
-    override fun getByCategory(categoryName: String, userId: Long): ItemShortListDto? {
-        try {
+    override fun getByCategory(categoryName: String, userId: Long): ItemShortListDto {
             val itemList = itemDao.getByCategory(categoryName)
             val listItemDto = ArrayList<ItemShortDto>()
-            if (itemList != null) {
+            if (itemList.isEmpty()){throw ErrorCustomMessage(ErrorTypes.NOT_FOUND_EXCEPTION).toException()}
                 for (item in itemList) {
-                    val fileEntity = fileDao.getByItemId(item.id!!)
+                    val fileEntity = fileDao.getByItemId(item.id!!) ?:  throw ErrorCustomMessage(ErrorTypes.NOT_FOUND_EXCEPTION).toException()
                     val shortItemDto = item.toItemShortDto(fileId = fileEntity.id!!)
                     listItemDto.add(shortItemDto)
                 }
-            }
+
             return ItemShortListDto(listItemDto)
-        } catch (e: Exception) {
-            throw CustomException.ItemNotFoundException()
         }
     }
 
 
-}

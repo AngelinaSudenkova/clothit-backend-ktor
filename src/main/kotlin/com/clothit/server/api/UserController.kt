@@ -14,28 +14,23 @@ class UserController(
     private val tokenService: JwtService = JwtServiceImpl()
 ) {
 
-    fun register(req: UserRegisterReq): String? {
+    fun register(req: UserRegisterReq): String {
         val userId = userService.registerUser(req)
-        if(userId != null){
-            val token = tokenService.createToken(req)
-            return token
-        }
-        return null
+        val token = tokenService.createToken(req)
+        return token
     }
 
-    fun login(req: UserLoginReq): String? {
+    fun login(req: UserLoginReq): String {
         val userDto = userService.authenticateUser(req.email, req.password)
-        if(userDto != null){
-            val token = tokenService.createToken(req)
-            return token
-        }
-        return null
+        val token = tokenService.createToken(req)
+        return token
+
     }
 
-    fun get(userId: UUID): UserDto? {
-        val userDto = userService.getUser(userId)
+    fun get(userId: UUID): UserDto {
+        val userEntity = userService.getUser(userId)
         // TODO: Add authorization logic here
-        return userDto
+        return userEntity.toDto()
     }
 
     fun logout(token: String) {
