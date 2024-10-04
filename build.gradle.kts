@@ -44,9 +44,13 @@ dependencies {
     implementation("io.ktor:ktor-server-swagger:$ktor_version")
     implementation("io.ktor:ktor-server-cors:$ktor_version")
     implementation("io.ktor:ktor-server-openapi:$ktor_version")
+    implementation("ch.qos.logback:logback-classic:1.2.11")
 
     implementation("io.ktor:ktor-server-auth:$ktor_version")
     implementation("io.ktor:ktor-server-auth-jwt:$ktor_version")
+    implementation("com.fasterxml.jackson.core:jackson-databind:2.14.0")
+    implementation ("com.fasterxml.jackson.core:jackson-core:2.14.0")
+    implementation ("com.fasterxml.jackson.core:jackson-annotations:2.14.0")
 
     implementation("io.ktor:ktor-server-sessions-jvm")
     implementation("io.ktor:ktor-server-netty-jvm")

@@ -45,8 +45,11 @@ class JwtServiceImpl(
             throw ErrorCustomMessage(ErrorTypes.NOT_AUTHORIZED).toException()
         }
 
-        val token = generateToken(secret = secret, issuer = issuer,
-            audience = audience, email = loginReq.email)
+        val token = generateToken(
+            secret = secret, issuer = issuer,
+            audience = audience, email = loginReq.email,
+            userId = foundUser.id!!
+        )
         tokenDao.save(
             TokenEntity(
                 token = token,
@@ -59,15 +62,17 @@ class JwtServiceImpl(
 
     override fun createToken(registerReq: UserRegisterReq): String {
         val foundUser: UserEntity = userService.getByEmail(registerReq.email)
-        val token = generateToken(secret = secret, issuer = issuer,
-            audience = audience, email = registerReq.email)
-            tokenDao.save(
-                TokenEntity(
-                    token = token,
-                    userId = foundUser.id!!
-                )
+        val token = generateToken(
+            secret = secret, issuer = issuer,
+            audience = audience, email = registerReq.email, userId = foundUser.id!!
+        )
+        tokenDao.save(
+            TokenEntity(
+                token = token,
+                userId = foundUser.id!!
             )
-            return token
+        )
+        return token
     }
 
 
@@ -75,7 +80,7 @@ class JwtServiceImpl(
         val email: String? = extractEmail(credential)
         val foundUser: UserEntity? = email?.let(userService::getByEmail)
         return foundUser?.let {
-            if (audienceMatches(credential))
+            if (audienceMatches(credential) && (tokenDao.tokenExists(credential)))
                 JWTPrincipal(credential.payload)
             else
                 null
@@ -96,11 +101,12 @@ class JwtServiceImpl(
         credential.payload.getClaim("email").asString()
 }
 
-private fun generateToken(audience : String, issuer: String, secret:String, email:String): String {
+private fun generateToken(audience: String, issuer: String, secret: String, email: String, userId: UUID): String {
     return JWT.create()
         .withAudience(audience)
         .withIssuer(issuer)
         .withClaim("email", email)
+        .withClaim("userId", userId.toString())
         .withExpiresAt(Date(System.currentTimeMillis() + 3_600_000))
         .sign(Algorithm.HMAC256(secret))
 }

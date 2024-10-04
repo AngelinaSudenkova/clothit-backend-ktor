@@ -3,11 +3,13 @@ package com.clothit.server.dao.impl
 import com.clothit.server.dao.TokenDao
 import com.clothit.server.model.entity.TokenEntity
 import com.clothit.server.model.persistence.TokenTable
+import io.ktor.server.auth.jwt.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.transaction
+import org.slf4j.LoggerFactory
 import java.util.*
 
 object TokenDaoImpl : TokenDao {
@@ -43,8 +45,19 @@ object TokenDaoImpl : TokenDao {
     }
 
     override fun deleteToken(token: String) {
-        transaction{
+        transaction {
             TokenTable.deleteWhere { TokenTable.token eq token }
         }
     }
+
+    override fun tokenExists(credential: JWTCredential): Boolean {
+
+        val userId = credential.payload.getClaim("userId").asString()
+        val logger = LoggerFactory.getLogger("Application")
+        logger.error(userId)
+        return transaction {
+            TokenTable.select { TokenTable.userId eq UUID.fromString(userId)}.empty().not()
+        }
+    }
 }
+

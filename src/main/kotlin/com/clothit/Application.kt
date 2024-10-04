@@ -30,6 +30,9 @@ fun main() {
 }
 
 fun Application.module() {
+    ///--------------security
+    configureSecurity(jwtService = JwtServiceImpl(userService = UserServiceImpl(userDao = UserDaoImpl), tokenDao = TokenDaoImpl))
+
     ///--------------routing
     itemRoutingConfigure()
     fileRoutingConfigure()
@@ -37,14 +40,9 @@ fun Application.module() {
     configureRouting()
     userRoutingConfigure()
 
-
     ///-------------config
     serializationConfigure()
-
     corsConfigure()
-
-    configureSecurity(jwtService = JwtServiceImpl(userService = UserServiceImpl(userDao = UserDaoImpl), tokenDao = TokenDaoImpl))
-
     swaggerConfigure()
 
 }

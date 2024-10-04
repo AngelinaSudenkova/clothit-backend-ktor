@@ -1,6 +1,7 @@
 package com.clothit.server.dao
 
 import com.clothit.server.model.entity.TokenEntity
+import io.ktor.server.auth.jwt.*
 import java.util.*
 
 interface TokenDao {
@@ -8,5 +9,6 @@ interface TokenDao {
     fun getTokenByUserId(userId: UUID): TokenEntity?
     fun deleteTokenByUserId(userId: UUID)
     fun deleteToken(token: String)
+    fun tokenExists(credential: JWTCredential): Boolean
 
 }

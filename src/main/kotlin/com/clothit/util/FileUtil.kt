@@ -8,7 +8,7 @@ import java.io.FileOutputStream
 class FileUtil {
     companion object {
 
-        private const val BASE_DIRECTORY = "E:\\"
+        private const val BASE_DIRECTORY = "D:\\clothitFiles\\"
 
         fun saveToFile(filename: String, byteArray: ByteArray) {
             val file = File(BASE_DIRECTORY + filename)
