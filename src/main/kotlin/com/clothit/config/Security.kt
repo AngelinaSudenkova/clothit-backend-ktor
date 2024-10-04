@@ -6,10 +6,10 @@ import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.server.auth.jwt.*
 import io.ktor.server.plugins.cors.routing.*
+import org.koin.ktor.ext.inject
 
-fun Application.configureSecurity(
-    jwtService: JwtServiceImpl
-) {
+fun Application.configureSecurity() {
+    val jwtService: JwtServiceImpl by inject()
     install(Authentication) {
         jwt {
             realm = jwtService.realm
@@ -22,8 +22,7 @@ fun Application.configureSecurity(
     }
 }
 
-fun Application.corsConfigure()
-{
+fun Application.corsConfigure() {
     install(CORS) {
         anyHost()
         allowHeader(HttpHeaders.ContentType)

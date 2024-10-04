@@ -5,13 +5,11 @@ import com.clothit.server.api.req.UserLoginReq
 import com.clothit.server.api.req.UserRegisterReq
 import com.clothit.server.service.JwtService
 import com.clothit.server.service.UserService
-import com.clothit.server.service.impl.JwtServiceImpl
-import com.clothit.server.service.impl.UserServiceImpl
 import java.util.*
 
 class UserController(
-    private val userService: UserService = UserServiceImpl(),
-    private val tokenService: JwtService = JwtServiceImpl()
+    private val userService: UserService,
+    private val tokenService: JwtService
 ) {
 
     fun register(req: UserRegisterReq): String {

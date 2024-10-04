@@ -8,9 +8,10 @@ import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import org.koin.ktor.ext.inject
 
 fun Application.outfitRoutingConfigure() {
-    val outfitController = OutfitController()
+    val outfitController: OutfitController by inject()
     routing {
         post("service/clothit/api/v1/outfit") {
             val req = call.receive<OutfitCreateReq>()
@@ -42,8 +43,6 @@ fun Application.outfitRoutingConfigure() {
                 val shortOutfit = outfitController.find(outfitName)
                 call.respond(shortOutfit.toString())
             }
-
-
         }
     }
 }

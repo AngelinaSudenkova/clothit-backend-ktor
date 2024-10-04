@@ -9,9 +9,12 @@ import io.ktor.server.auth.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import org.koin.ktor.ext.inject
 
 fun Application.itemRoutingConfigure() {
-    val itemController = ItemController()
+
+    val itemController: ItemController by inject()
+
     routing {
         authenticate {
             post("service/clothit/api/v1/item") {

@@ -5,6 +5,9 @@ val logback_version: String by project
 val exposedVersion: String by project
 val postgresVersion: String by project
 val h2_version: String by project
+val koin_version: String by project
+val koin_ktor: String by project
+
 
 plugins {
     kotlin("jvm") version "1.9.23"
@@ -72,6 +75,11 @@ dependencies {
     testImplementation("io.ktor:ktor-server-test-host-jvm:2.3.9")
     testImplementation("org.jetbrains.kotlin:kotlin-test:$kotlin_version")
     testImplementation("io.ktor:ktor-server-test-host:$ktor_version")
+
+    implementation(project.dependencies.platform("io.insert-koin:koin-bom:$koin_version"))
+    implementation("io.insert-koin:koin-core")
+    implementation("io.insert-koin:koin-ktor:$koin_ktor")
+    implementation("io.insert-koin:koin-logger-slf4j:$koin_ktor")
 
     testImplementation("io.mockk:mockk:1.12.0")
     testImplementation("com.github.hyperskill:hs-test:master-SNAPSHOT")

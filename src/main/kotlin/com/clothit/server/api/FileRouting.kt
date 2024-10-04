@@ -5,6 +5,7 @@ import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import org.koin.ktor.ext.inject
 
 
 object FileUrlConstant{
@@ -13,8 +14,8 @@ object FileUrlConstant{
 }
 
 fun Application.fileRoutingConfigure() {
-    val fileController = FileController()
 
+    val fileController : FileController by inject()
 
     routing {
         post("service/clothit/api/v1/file") {

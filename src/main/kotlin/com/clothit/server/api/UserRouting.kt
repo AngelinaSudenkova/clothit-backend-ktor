@@ -8,9 +8,11 @@ import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import org.koin.ktor.ext.inject
 
 fun Application.userRoutingConfigure() {
-    val userController = UserController()
+
+    val userController: UserController by inject()
 
     routing {
         post("service/clothit/api/v1/login") {

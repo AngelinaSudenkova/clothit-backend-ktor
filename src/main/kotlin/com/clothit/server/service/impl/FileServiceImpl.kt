@@ -12,7 +12,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.InputStream
 
-class FileServiceImpl(private val fileDao: FileDao) : FileService {
+class FileServiceImpl(
+    private val fileDao: FileDao
+) : FileService {
 
     override suspend fun save(file: MultiPartData): Int {
         var fileId: Int = -1

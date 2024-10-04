@@ -5,14 +5,15 @@ import com.clothit.error.ErrorTypes
 import com.clothit.server.api.dto.UserDto
 import com.clothit.server.api.req.UserRegisterReq
 import com.clothit.server.dao.UserDao
-import com.clothit.server.dao.impl.UserDaoImpl
 import com.clothit.server.model.entity.UserEntity
 import com.clothit.server.service.UserService
 import com.clothit.util.DateTimeUtil
 import com.clothit.util.PasswordUtil
 import java.util.*
 
-class UserServiceImpl(private val userDao: UserDao = UserDaoImpl) : UserService {
+class UserServiceImpl(
+    private val userDao: UserDao
+) : UserService {
 
     override fun registerUser(userRegisterReq: UserRegisterReq): UUID {
         if (userDao.checkIfExists(userRegisterReq.email)) {
