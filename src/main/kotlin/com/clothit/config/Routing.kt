@@ -8,7 +8,7 @@ import io.ktor.server.routing.*
 fun Application.configureRouting() {
     routing {
         get("/") {
-            call.respondText("Testing")
+            call.respondText("Hello, world!")
         }
         post("/test"){
           //  val registerController = RegisterController()

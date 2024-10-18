@@ -33,6 +33,8 @@ fun Application.module() {
         modules(appModule())
     }
 
+    configureRouting()
+
     ///--------------security
     configureSecurity()
 

@@ -81,6 +81,9 @@ dependencies {
     implementation("io.insert-koin:koin-ktor:$koin_ktor")
     implementation("io.insert-koin:koin-logger-slf4j:$koin_ktor")
 
+    testImplementation("io.ktor:ktor-server-tests:2.0.0")
+    testImplementation("org.mockito:mockito-core:4.0.0")
+    testImplementation("org.jetbrains.kotlin:kotlin-test:1.6.0")
     testImplementation("io.mockk:mockk:1.12.0")
     testImplementation("com.github.hyperskill:hs-test:master-SNAPSHOT")
 

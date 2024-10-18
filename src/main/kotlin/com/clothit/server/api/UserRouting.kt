@@ -19,7 +19,7 @@ fun Application.userRoutingConfigure() {
             val req = call.receive<UserLoginReq>()
             val token = userController.login(req)
             if (token != null) {
-                call.respond(token.toString())
+                call.respond(token)
             } else {
                 call.respond(HttpStatusCode.BadRequest)
             }
