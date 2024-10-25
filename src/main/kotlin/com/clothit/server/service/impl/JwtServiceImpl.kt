@@ -8,17 +8,17 @@ import com.clothit.error.ErrorTypes
 import com.clothit.server.api.req.UserLoginReq
 import com.clothit.server.api.req.UserRegisterReq
 import com.clothit.server.dao.TokenDao
+import com.clothit.server.dao.UserDao
 import com.clothit.server.model.entity.TokenEntity
 import com.clothit.server.model.entity.UserEntity
 import com.clothit.server.service.JwtService
-import com.clothit.server.service.UserService
 import com.clothit.util.PasswordUtil
 import com.typesafe.config.ConfigFactory
 import io.ktor.server.auth.jwt.*
 import java.util.*
 
 class JwtServiceImpl(
-    private val userService: UserService,
+    private val userDao: UserDao,
     private val tokenDao: TokenDao
 ) : JwtService {
 
@@ -38,9 +38,10 @@ class JwtServiceImpl(
 
 
     override fun createToken(loginReq: UserLoginReq): String {
-        val foundUser: UserEntity = userService.getByEmail(loginReq.email)
+        val foundUser: UserEntity? = userDao.searchByEmail(loginReq.email)
+            ?: throw ErrorCustomMessage(ErrorTypes.NOT_FOUND_EXCEPTION).toException()
 
-        if (!PasswordUtil.checkPassword(loginReq.password, foundUser.passwordHash)) {
+        if (!PasswordUtil.checkPassword(loginReq.password, foundUser!!.passwordHash)) {
             throw ErrorCustomMessage(ErrorTypes.NOT_AUTHORIZED).toException()
         }
 
@@ -60,7 +61,9 @@ class JwtServiceImpl(
 
 
     override fun createToken(registerReq: UserRegisterReq): String {
-        val foundUser: UserEntity = userService.getByEmail(registerReq.email)
+        val foundUser: UserEntity = userDao.searchByEmail(registerReq.email)
+            ?: throw ErrorCustomMessage(ErrorTypes.NOT_FOUND_EXCEPTION).toException()
+
         val token = generateToken(
             secret = secret, issuer = issuer,
             audience = audience, email = registerReq.email, userId = foundUser.id!!
@@ -77,7 +80,7 @@ class JwtServiceImpl(
 
     override fun validateToken(credential: JWTCredential): JWTPrincipal? {
         val email: String? = extractEmail(credential)
-        val foundUser: UserEntity? = email?.let(userService::getByEmail)
+        val foundUser: UserEntity? = email?.let(userDao::searchByEmail)
         return foundUser?.let {
             if (audienceMatches(credential) && (tokenDao.tokenExists(credential)))
                 JWTPrincipal(credential.payload)

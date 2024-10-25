@@ -1,5 +1,7 @@
 package com.clothit.server.api
 
+import com.clothit.server.api.dto.SingInDto
+import com.clothit.server.api.dto.SingUpDto
 import com.clothit.server.api.dto.UserDto
 import com.clothit.server.api.req.UserLoginReq
 import com.clothit.server.api.req.UserRegisterReq
@@ -12,16 +14,14 @@ class UserController(
     private val tokenService: JwtService
 ) {
 
-    fun register(req: UserRegisterReq): String {
-        val userId = userService.registerUser(req)
-        val token = tokenService.createToken(req)
-        return token
+    fun register(req: UserRegisterReq): SingUpDto {
+        val token = userService.registerUser(req)
+        return SingUpDto(token)
     }
 
-    fun login(req: UserLoginReq): String {
-        val userDto = userService.authenticateUser(req.email, req.password)
-        val token = tokenService.createToken(req)
-        return token
+    fun login(req: UserLoginReq): SingInDto {
+        val token = userService.authenticateUser(req.email, req.password)
+        return SingInDto(token)
 
     }
 

@@ -17,9 +17,9 @@ fun Application.userRoutingConfigure() {
     routing {
         post("service/clothit/api/v1/login") {
             val req = call.receive<UserLoginReq>()
-            val token = userController.login(req)
-            if (token != null) {
-                call.respond(token)
+            val signInDto = userController.login(req)
+            if (signInDto != null) {
+                call.respond(signInDto)
             } else {
                 call.respond(HttpStatusCode.BadRequest)
             }
@@ -28,9 +28,9 @@ fun Application.userRoutingConfigure() {
         }
         post("service/clothit/api/v1/register") {
             val req = call.receive<UserRegisterReq>()
-            val token = userController.register(req)
-            if (token != null) {
-                call.respond(token.toString())
+            val signUpDto = userController.register(req)
+            if (signUpDto != null) {
+                call.respond(signUpDto.toString())
             } else {
                 call.respond(HttpStatusCode.BadRequest)
             }
