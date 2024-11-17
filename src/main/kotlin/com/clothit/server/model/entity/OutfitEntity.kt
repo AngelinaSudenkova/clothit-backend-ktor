@@ -2,6 +2,7 @@ package com.clothit.server.model.entity
 
 import com.clothit.server.api.FileUrlConstant
 import com.clothit.server.api.dto.OutfitShortDto
+import com.clothit.server.api.req.OutfitCreateReq
 import com.clothit.server.api.req.OutfitUpdateReq
 import com.clothit.server.model.enums.OutfitSeason
 import com.clothit.util.DateTimeUtil
@@ -37,5 +38,11 @@ data class OutfitEntity(
         this.season = req.season
         this.description = req.description
         this.timeUpdated = DateTimeUtil.getCurrentTime()
+    }
+
+    companion object {
+        fun outfitCreate(req: OutfitCreateReq): OutfitEntity {
+            return OutfitEntity(req.season, req.description, req.name)
+        }
     }
 }

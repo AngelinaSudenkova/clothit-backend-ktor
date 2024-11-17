@@ -1,5 +1,7 @@
 package com.clothit.server.dao.impl
 
+import com.clothit.error.ExceptionCustomMessage
+import com.clothit.error.ExceptionTypes
 import com.clothit.server.dao.OutfitDao
 import com.clothit.server.model.entity.OutfitEntity
 import com.clothit.server.model.enums.OutfitSeason
@@ -37,6 +39,11 @@ object OutfitDaoImpl: OutfitDao {
                 it[OutfitTable.timeUpdated]
             )
         }
+    }
+
+    override fun findById(id: Int): OutfitEntity {
+        val outfitEntity = getById(id)
+        return outfitEntity ?: throw  ExceptionCustomMessage(ExceptionTypes.NOT_FOUND_EXCEPTION).toException()
     }
 
 

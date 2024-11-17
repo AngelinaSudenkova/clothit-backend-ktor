@@ -9,6 +9,7 @@ interface FileDao {
     fun getAllByItemId(itemId:Int): List<FileEntity>
     fun getByItemId(itemId: Int): FileEntity?
     fun getByOutfitId(outfitId: Int): List<FileEntity>?
+    fun findByOutfitId(outfitId: Int): List<FileEntity>
     fun update(entity: FileEntity)
     fun deleteAllByOutfitId(outfitId: Int)
     fun findByItemId(id: Int): FileEntity

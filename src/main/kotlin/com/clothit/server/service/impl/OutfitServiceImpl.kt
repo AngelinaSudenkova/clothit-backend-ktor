@@ -25,49 +25,34 @@ class OutfitServiceImpl(
 
 
     override fun save(req: OutfitCreateReq): Int {
-        return transaction {
-            val outfitEntity = OutfitEntity(
-                season = req.season,
-                description = req.description,
-                name = req.name
-            )
+            val outfitEntity = OutfitEntity.outfitCreate(req)
             val outfitEntityId = outfitDao.save(outfitEntity)
             outfitEntity.id = outfitEntityId
             val itemsId = req.itemsId
             for (itemId in itemsId) {
-                if (!checkIfItemExists(itemId)) throw (ExceptionCustomMessage(ExceptionTypes.NOT_FOUND_EXCEPTION).toException())
+                checkIfItemExists(itemId)
                 itemsToOutfitsDao.save(outfitEntityId!!, itemId)
-                val fileEntityItem = fileDao.getById(itemId)
-                    ?: throw (ExceptionCustomMessage(ExceptionTypes.NOT_FOUND_EXCEPTION).toException())
+                val fileEntityItem = fileDao.findById(itemId)
                 val fileEntityOutfit = createOutfitFileEntity(fileEntityItem, outfitEntity)
                 fileDao.save(fileEntityOutfit)
             }
-            outfitEntityId!!
-        }
+            return outfitEntityId!!
     }
 
 
     override fun getAll(userId: Long): OutfitShortListDto {
         val listOutfitEntity = outfitDao.getAll()
         val listShortOutfitDto = ArrayList<OutfitShortDto>()
-        if (listOutfitEntity.isEmpty()) {
-            throw ExceptionCustomMessage(ExceptionTypes.NOT_FOUND_EXCEPTION).toException()
-        }
         for (outfit in listOutfitEntity) {
-            val fileEntities = fileDao.getByOutfitId(outfit.id!!)
-                ?: throw ExceptionCustomMessage(ExceptionTypes.NOT_FOUND_EXCEPTION).toException()
+            val fileEntities = fileDao.findByOutfitId(outfit.id!!)
             listShortOutfitDto.add(outfit.toShortOutfitDto(fileEntities))
         }
         return OutfitShortListDto(listShortOutfitDto)
     }
 
     override fun getOneById(userId: Long, outfitId: Int): OutfitShortDto {
-
-        val outfitEntity = outfitDao.getById(outfitId)
-            ?: throw ExceptionCustomMessage(ExceptionTypes.NOT_FOUND_EXCEPTION).toException()
-
-        val fileEntities = fileDao.getByOutfitId(outfitId)
-            ?: throw ExceptionCustomMessage(ExceptionTypes.NOT_FOUND_EXCEPTION).toException()
+        val outfitEntity = outfitDao.findById(outfitId)
+        val fileEntities = fileDao.findByOutfitId(outfitId)
 
         return outfitEntity.toShortOutfitDto(fileEntities)
     }
@@ -75,9 +60,7 @@ class OutfitServiceImpl(
 
     override fun update(outfitId: Int, req: OutfitUpdateReq) {
         transaction {
-            val oldOutfitEntity = outfitDao.getById(outfitId)
-                ?: throw ExceptionCustomMessage(ExceptionTypes.NOT_FOUND_EXCEPTION).toException()
-
+            val oldOutfitEntity = outfitDao.findById(outfitId)
             oldOutfitEntity.update(req)
             outfitDao.update(oldOutfitEntity)
             val itemsId = req.itemsId
@@ -91,8 +74,7 @@ class OutfitServiceImpl(
             fileDao.deleteAllByOutfitId(outfitId)
             val newItems = itemsToOutfitsDao.getItemsIdByOutfitId(outfitId)
             for (item in newItems) {
-                val fileEntityItem = fileDao.getById(item)
-                    ?: throw ExceptionCustomMessage(ExceptionTypes.NOT_FOUND_EXCEPTION).toException()
+                val fileEntityItem = fileDao.findById(item)
                 val fileEntityOutfit = createOutfitFileEntity(fileEntityItem, oldOutfitEntity)
                 fileDao.save(fileEntityOutfit)
             }
@@ -103,22 +85,20 @@ class OutfitServiceImpl(
     override fun find(name: String, userId: Long): OutfitShortListDto {
 
         val listOutfitEntity = outfitDao.searchByWord(name)
-        if (listOutfitEntity.isEmpty()) {
-            throw ExceptionCustomMessage(ExceptionTypes.NOT_FOUND_EXCEPTION).toException()
-        }
-
         val listShortOutfitDto = ArrayList<OutfitShortDto>()
+
         for (outfit in listOutfitEntity) {
-            val file = outfit.id?.let { fileDao.getByOutfitId(it) }
-                ?: throw ExceptionCustomMessage(ExceptionTypes.NOT_FOUND_EXCEPTION).toException()
-            listShortOutfitDto.add(outfit.toShortOutfitDto(file))
+            val file = outfit.id?.let { fileDao.findByOutfitId(it) }
+            listShortOutfitDto.add(outfit.toShortOutfitDto(file!!))
         }
         return OutfitShortListDto(listShortOutfitDto)
     }
 
 
     private fun checkIfItemExists(itemId: Int): Boolean {
-        return itemDao.checkIfExistsById(itemId)
+        val ifExist = itemDao.checkIfExistsById(itemId)
+        if (!ifExist) throw ExceptionCustomMessage(ExceptionTypes.NOT_FOUND_EXCEPTION).toException()
+        return ifExist
     }
 
     private fun createOutfitFileEntity(fileEntityItem: FileEntity, outfitEntity: OutfitEntity): FileEntity {
@@ -127,9 +107,6 @@ class OutfitServiceImpl(
         fileEntityOutfit.outfit = outfitEntity
         return fileEntityOutfit
     }
-
-
-
 
     inner class OutfitItemsAnalysisObj(
         val tie: List<Int>,

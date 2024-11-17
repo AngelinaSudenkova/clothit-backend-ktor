@@ -124,7 +124,7 @@ object FileDaoImpl : FileDao {
         return ObjectUtils.checkNotNull(result);
     }
 
-    override fun getByOutfitId(outfitId: Int): List<FileEntity> {
+    override fun getByOutfitId(outfitId: Int): List<FileEntity>? {
         return transaction {
             val result = (FileTable innerJoin OutfitTable).selectAll()
                 .where { FileTable.outfitId eq OutfitTable.id }
@@ -149,6 +149,10 @@ object FileDaoImpl : FileDao {
                 )
             }
         }
+    }
+
+    override fun findByOutfitId(outfitId: Int): List<FileEntity> {
+        return getByOutfitId(outfitId) ?: throw ExceptionCustomMessage(ExceptionTypes.NOT_FOUND_EXCEPTION).toException()
     }
 
     override fun update(entity: FileEntity) {
