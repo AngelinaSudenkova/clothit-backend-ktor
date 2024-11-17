@@ -34,16 +34,11 @@ class TokenServiceImpl(
         return token
     }
 
-
     override fun validateAccessToken(credential: JWTCredential): JWTPrincipal? { //TODO revision and fix logic
-        val email: String? = extractEmail(credential)
-        val foundUser: UserEntity? = email?.let(userDao::getByEmail)
-        return foundUser?.let {
-            if (audienceMatches(credential) && (tokenDao.tokenExists(credential)))
-                JWTPrincipal(credential.payload)
-            else
-                null
-        }
+        val refreshTokenId = credential.payload.subject?.toIntOrNull() ?: return null
+        val token = tokenDao.findTokenById(refreshTokenId)
+        userDao.getById(token.userId) ?: return null
+        return JWTPrincipal(credential.payload)
     }
 
     override fun deleteToken(token: String) {

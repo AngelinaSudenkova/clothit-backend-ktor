@@ -37,6 +37,24 @@ object TokenDaoImpl : TokenDao {
         }
     }
 
+    override fun getTokenById(id: Int): TokenEntity? {
+        return transaction {
+            TokenTable.selectAll().where { TokenTable.id eq id }
+                .map {
+                    TokenEntity(
+                        it[TokenTable.id],
+                        it[TokenTable.userId],
+                        it[TokenTable.token]
+                    )
+                }.singleOrNull()
+        }
+    }
+
+    override fun findTokenById(id: Int): TokenEntity {
+        val result = getTokenById(id)
+        return ObjectUtils.checkNotNull(result)
+    }
+
     override fun getTokenByValue(value: String): TokenEntity? {
         return transaction {
             TokenTable.selectAll().where { TokenTable.token eq value }
