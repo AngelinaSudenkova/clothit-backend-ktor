@@ -8,41 +8,35 @@ import io.ktor.server.routing.*
 import org.koin.ktor.ext.inject
 
 
-object FileUrlConstant{
-    const val fileViewUrl = "service/clothit/api/v1/file/{fileId}"
-    const val fileUpdateUrl = "service/clothit/api/v1/file/update/{fileId}"
+object FileUrlConstant {
+    const val FILE_VIEW_URL = "service/clothit/api/v1/file/{fileId}"
+    const val FILE_UPDATE_URL = "service/clothit/api/v1/file/update/{fileId}"
+    const val FILE_SAVE = "service/clothit/api/v1/file"
 }
 
 fun Application.fileRoutingConfigure() {
 
-    val fileController : FileController by inject()
+    val fileController: FileController by inject()
 
     routing {
-        post("service/clothit/api/v1/file") {
+
+        post(FileUrlConstant.FILE_SAVE) {
             val multipart = call.receiveMultipart()
             val idDto = fileController.save(multipart)
             call.respond(idDto.toString())
         }
 
-        get(FileUrlConstant.fileViewUrl) {
+        get(FileUrlConstant.FILE_VIEW_URL) {
             val fileId = call.parameters["fileId"]?.toIntOrNull()
-            if (fileId == null) {
-                call.respond(HttpStatusCode.BadRequest, "Invalid file ID")
-                return@get
-            }
-            //TODO(CUSTOM EXCEPTION)
             val byteArray = fileController.getById(fileId)
             call.respond(byteArray)
         }
 
-        put(FileUrlConstant.fileUpdateUrl) {
+        put(FileUrlConstant.FILE_UPDATE_URL) {
             val fileId = call.parameters["fileId"]?.toIntOrNull()
             val multipart = call.receiveMultipart()
-            if (fileId == null) {
-                call.respond(HttpStatusCode.BadRequest, "Invalid file ID")
-                return@put
-            }
-            fileController.update(fileId,multipart)
+
+            fileController.update(fileId, multipart)
             call.respond(HttpStatusCode.OK)
         }
     }

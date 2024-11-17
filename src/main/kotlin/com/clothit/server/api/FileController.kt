@@ -2,6 +2,7 @@ package com.clothit.server.api
 
 import com.clothit.server.api.dto.IdDto
 import com.clothit.server.service.FileService
+import com.clothit.util.ObjectUtils
 import io.ktor.http.content.*
 
 class FileController(
@@ -12,11 +13,13 @@ class FileController(
         return IdDto(fileId)
     }
 
-    fun getById(id: Int): ByteArray {
-        return fileService.getById(id)
+    fun getById(id: Int?): ByteArray {
+        val validFileId = ObjectUtils.checkNotNullBadRequest(id)
+        return fileService.getById(validFileId)
     }
 
-    suspend fun update(fileId: Int, req: MultiPartData) {
-        fileService.update(fileId, req)
+    suspend fun update(fileId: Int?, req: MultiPartData) {
+        val validFileId = ObjectUtils.checkNotNullBadRequest(fileId)
+        fileService.update(validFileId, req)
     }
 }

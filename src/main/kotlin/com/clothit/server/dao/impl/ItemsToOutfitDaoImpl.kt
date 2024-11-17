@@ -13,11 +13,11 @@ object ItemsToOutfitDaoImpl : ItemsToOutfitsDao {
     override fun save(outfitId: Int, itemId: Int): Int {
         var id = -1
         transaction {
-            val inserResult = ItemsToOutfitsTable.insert {
+            val insertResult = ItemsToOutfitsTable.insert {
                 it[ItemsToOutfitsTable.itemId] = itemId
                 it[ItemsToOutfitsTable.outfitId] = outfitId
             }
-            id = inserResult[ItemsToOutfitsTable.id]
+            id = insertResult[ItemsToOutfitsTable.id]
         }
         return id
     }

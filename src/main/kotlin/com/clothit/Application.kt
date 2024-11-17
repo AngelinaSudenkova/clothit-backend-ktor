@@ -3,7 +3,7 @@ package com.clothit
 
 
 import com.clothit.config.*
-import com.clothit.config.di.appModule
+import com.clothit.config.di.*
 import com.clothit.server.api.fileRoutingConfigure
 import com.clothit.server.api.itemRoutingConfigure
 import com.clothit.server.api.outfitRoutingConfigure
@@ -20,7 +20,7 @@ val PASSWORD_DATABASE = System.getenv("CLOTHITPASSWORD")
 fun main() {
 
     Database.connect("jdbc:postgresql://localhost:5432/clothit_new", driver = "org.postgresql.Driver",
-        user = "postgres", password = PASSWORD_DATABASE
+        user = "postgres", password = "root"
     )
     embeddedServer(Netty, port = 8080, host = "0.0.0.0", module = Application::module)
         .start(wait = true)
@@ -30,9 +30,14 @@ fun main() {
 fun Application.module() {
 
     startKoin{
-        modules(appModule())
+        modules(
+            userModule(),
+            authModule(),
+            fileModule(),
+            itemModule(),
+            outfitModule()
+        )
     }
-
     configureRouting()
 
     ///--------------security

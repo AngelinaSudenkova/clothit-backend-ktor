@@ -7,5 +7,5 @@ import kotlinx.serialization.Serializable
 data class ItemCreateReq(
     val category: ItemCategory,
     val description: String,
-    val fileId: Int
+    val fileId: Int?
 )

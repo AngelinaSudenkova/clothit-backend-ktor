@@ -13,7 +13,6 @@ class FileUtil {
         fun saveToFile(filename: String, byteArray: ByteArray) {
             val file = File(BASE_DIRECTORY + filename)
             file.createNewFile()
-           // file.parentFile.mkdirs()
             val outputStream = FileOutputStream(file)
             outputStream.write(byteArray)
             outputStream.close()

@@ -41,6 +41,7 @@ dependencies {
     implementation("io.ktor:ktor-server-swagger-jvm")
     implementation("io.ktor:ktor-server-swagger:$ktor_version")
     implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.3.0")
+    implementation("io.ktor:ktor-server-status-pages:$ktor_version")
 
     implementation("com.google.dagger:dagger:2.46.1")
 

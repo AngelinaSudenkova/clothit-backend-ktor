@@ -1,7 +1,5 @@
 package com.clothit.server.service.impl
 
-import com.clothit.error.ErrorCustomMessage
-import com.clothit.error.ErrorTypes
 import com.clothit.server.dao.FileDao
 import com.clothit.server.model.entity.FileEntity
 import com.clothit.server.service.FileService
@@ -22,58 +20,77 @@ class FileServiceImpl(
         withContext(Dispatchers.IO) {
             file.forEachPart { part ->
                 if (part is PartData.FileItem) {
-                    val inputStream: InputStream = part.streamProvider()
-                    val byteArray = inputStream.readBytes()
-                    FileUtil.saveToFile(part.originalFileName!!, byteArray)
-                    val fileEntity = FileEntity(
-                        name = part.originalFileName ?: "Unknown",
-                        size = byteArray.size.toLong(),
-                    )
-                    fileId = fileDao.save(fileEntity)
-                        ?: throw ErrorCustomMessage(ErrorTypes.INTERNAL_SERVER_ERROR).toException()
-
+                    fileId = processAndSaveFilePart(part)
                 }
             }
         }
         return fileId
-
     }
 
     override fun getById(fileId: Int): ByteArray {
-
-        val fileEntity =
-            fileDao.getById(fileId) ?: throw ErrorCustomMessage(ErrorTypes.NOT_FOUND_EXCEPTION).toException()
-        val fileName = fileEntity.name
-        return FileUtil.readFromFile(fileName)
+        val fileEntity = fileDao.findById(fileId)
+        return FileUtil.readFromFile(fileEntity.name)
     }
 
+
     override suspend fun update(fileId: Int, newFile: MultiPartData) {
-        val oldFileEntity = fileDao.getById(fileId)
-            ?: throw ErrorCustomMessage(ErrorTypes.NOT_FOUND_EXCEPTION).toException()
+
+        val oldFileEntity = fileDao.findById(fileId)
         val oldFileName = oldFileEntity.name
         val oldByteArray = FileUtil.readFromFile(oldFileName)
 
-        var newByteArray: ByteArray? = null
         withContext(Dispatchers.IO) {
             newFile.forEachPart { part ->
                 if (part is PartData.FileItem) {
-                    val inputStream: InputStream = part.streamProvider()
-                    newByteArray = inputStream.readBytes()
-                    if (!oldByteArray.contentEquals(newByteArray)) {
-                        FileUtil.saveToFile(part.originalFileName!!, newByteArray!!)
-                        val fileEntity = FileEntity(
-                            id = oldFileEntity.id!!,
-                            item = oldFileEntity.item,
-                            name = part.originalFileName ?: "Unknown",
-                            size = newByteArray!!.size.toLong(),
-                            timeCreated = oldFileEntity.timeCreated,
-                            timeUpdated = DateTimeUtil.getCurrentTime()
-                        )
-                        fileDao.update(fileEntity)
-                    }
+                    processFilePartUpdate(part, oldFileEntity, oldByteArray)
                 }
             }
         }
+
+    }
+
+    /// --------- utils-------///
+
+    //process file
+
+    private fun processFilePartUpdate(
+        part: PartData.FileItem,
+        oldFileEntity: FileEntity,
+        oldByteArray: ByteArray
+    ) {
+
+        val inputStream: InputStream = part.streamProvider()
+        val newByteArray = inputStream.readBytes()
+
+        if (oldByteArray.contentEquals(newByteArray)) {
+            return
+        }
+
+
+        val newOriginalFileName = part.originalFileName!!
+        FileUtil.saveToFile(newOriginalFileName, newByteArray)
+
+
+        oldFileEntity.update(
+            name = newOriginalFileName,
+            size = newByteArray.size.toLong(),
+            timeCreated = oldFileEntity.timeCreated,
+            timeUpdated = DateTimeUtil.getCurrentTime()
+        )
+
+        fileDao.update(oldFileEntity)
+    }
+
+    private fun processAndSaveFilePart(part: PartData.FileItem): Int {
+        val inputStream: InputStream = part.streamProvider()
+        val byteArray = inputStream.readBytes()
+        val originalFileName = part.originalFileName!!
+
+        FileUtil.saveToFile(originalFileName, byteArray)
+
+        val fileEntity = FileEntity.filePreSaveInit(name = originalFileName, size = byteArray.size.toLong())
+        fileDao.save(fileEntity)
+        return fileEntity.id!!
     }
 }
 

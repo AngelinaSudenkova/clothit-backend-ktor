@@ -17,7 +17,6 @@ class ItemController(
 
     fun get(): ItemShortListDto? {
         val itemShortListDto = itemService.getAll(1)
-        //TODO(authorization session)
         return itemShortListDto
     }
 
@@ -27,7 +26,6 @@ class ItemController(
 
     fun getByCategory(categoryName: String): ItemShortListDto? {
         return itemService.getByCategory(categoryName, 1)
-
     }
 
 }

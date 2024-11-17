@@ -3,11 +3,10 @@ package com.clothit.server.dao.impl
 import com.clothit.server.dao.TokenDao
 import com.clothit.server.model.entity.TokenEntity
 import com.clothit.server.model.persistence.TokenTable
+import com.clothit.util.ObjectUtils
 import io.ktor.server.auth.jwt.*
+import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
-import org.jetbrains.exposed.sql.deleteWhere
-import org.jetbrains.exposed.sql.insert
-import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.slf4j.LoggerFactory
 import java.util.*
@@ -26,8 +25,8 @@ object TokenDaoImpl : TokenDao {
     }
 
     override fun getTokenByUserId(userId: UUID): TokenEntity? {
-        return transaction {
-            TokenTable.select { TokenTable.userId eq userId }
+       return transaction {
+             TokenTable.selectAll().where { TokenTable.userId eq userId }
                 .map {
                     TokenEntity(
                         it[TokenTable.id],
@@ -36,6 +35,24 @@ object TokenDaoImpl : TokenDao {
                     )
                 }.singleOrNull()
         }
+    }
+
+    override fun getTokenByValue(value: String): TokenEntity? {
+        return transaction {
+            TokenTable.selectAll().where { TokenTable.token eq value }
+                .map {
+                    TokenEntity(
+                        it[TokenTable.id],
+                        it[TokenTable.userId],
+                        it[TokenTable.token]
+                    )
+                }.singleOrNull()
+        }
+    }
+
+    override fun findTokenByValue(value: String): TokenEntity {
+        val result = getTokenByValue(value)
+        return ObjectUtils.checkNotNull(result)
     }
 
     override fun deleteTokenByUserId(userId: UUID) {
@@ -56,7 +73,7 @@ object TokenDaoImpl : TokenDao {
         val logger = LoggerFactory.getLogger("Application")
         logger.error(userId)
         return transaction {
-            TokenTable.select { TokenTable.userId eq UUID.fromString(userId)}.empty().not()
+            TokenTable.selectAll().where { TokenTable.userId eq UUID.fromString(userId) }.empty().not()
         }
     }
 }

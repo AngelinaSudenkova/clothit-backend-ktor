@@ -15,31 +15,30 @@ fun Application.userRoutingConfigure() {
     val userController: UserController by inject()
 
     routing {
-        post("service/clothit/api/v1/login") {
+
+        post("service/clothit/api/v1/user/login") {
             val req = call.receive<UserLoginReq>()
             val signInDto = userController.login(req)
-            if (signInDto != null) {
-                call.respond(signInDto)
-            } else {
-                call.respond(HttpStatusCode.BadRequest)
-            }
-
+            call.respond(signInDto)
 
         }
-        post("service/clothit/api/v1/register") {
+        post("service/clothit/api/v1/user/register") {
             val req = call.receive<UserRegisterReq>()
             val signUpDto = userController.register(req)
-            if (signUpDto != null) {
-                call.respond(signUpDto.toString())
-            } else {
-                call.respond(HttpStatusCode.BadRequest)
-            }
+            call.respond(signUpDto.toString())
         }
 
-        delete("service/clothit/api/v1/logout") {
+        delete("service/clothit/api/v1/user/logout") {
             val req = call.receive<UserLogoutReq>()
             userController.logout(req.token)
             call.respond(HttpStatusCode.OK)
         }
+
+        get("service/clothit/api/v1/user/{username}/search") {
+            val name = call.parameters["username"]
+            val userList = userController.searchByUsername(name)
+            call.respond(userList)
+        }
+
     }
 }

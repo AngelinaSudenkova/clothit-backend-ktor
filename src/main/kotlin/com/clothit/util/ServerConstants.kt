@@ -1,5 +1,5 @@
 package com.clothit.util
 
 object ServerConstants {
-    val constantServerUrl = "http://localhost:8080/"
+    const val SERVER_URL = "http://localhost:8080/"
 }

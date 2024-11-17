@@ -7,8 +7,6 @@ class DateTimeUtil {
 
 
     companion object {
-
-
         private var currentTime: Instant = Instant.now()
 
         fun getCurrentTime(): Instant {

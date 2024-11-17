@@ -1,5 +1,8 @@
 package com.clothit.server.dao.impl
 
+import com.clothit.error.ExceptionCustomMessage
+import com.clothit.error.ExceptionTypes
+import com.clothit.error.annotations.HandleErrors
 import com.clothit.server.dao.FileDao
 import com.clothit.server.model.entity.FileEntity
 import com.clothit.server.model.entity.ItemEntity
@@ -10,14 +13,15 @@ import com.clothit.server.model.persistence.FileTable
 import com.clothit.server.model.persistence.ItemTable
 import com.clothit.server.model.persistence.OutfitTable
 import com.clothit.util.DateTimeUtil
+import com.clothit.util.ObjectUtils
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.transactions.transaction
 
-
+@HandleErrors
 object FileDaoImpl : FileDao {
 
-    override fun save(entity: FileEntity): Int? {
+    override fun save(entity: FileEntity) {
         var id: Int? = null
         transaction {
             val insertResult = FileTable.insert {
@@ -30,7 +34,13 @@ object FileDaoImpl : FileDao {
             }
             id = insertResult[FileTable.id]
         }
-        return id
+        entity.id = id
+    }
+
+
+    override fun findById(id: Int): FileEntity {
+        val fileEntity = getById(id);
+        return ObjectUtils.checkNotNull(fileEntity);
     }
 
     override fun getById(id: Int): FileEntity? {
@@ -46,13 +56,13 @@ object FileDaoImpl : FileDao {
                 it[FileTable.id],
                 it[FileTable.name],
                 it[FileTable.size],
-                    ItemEntity(
-                        it[ItemTable.id],
-                      //  it[ItemTable.category].let { t -> ItemCategory.valueOf(t) },
-                        ItemCategory.BOTTOMS,
-                        it[ItemTable.description],
-                        it[ItemTable.timeCreated] ?: DateTimeUtil.getCurrentTime()
-                    ),
+                ItemEntity(
+                    it[ItemTable.id],
+                    //  it[ItemTable.category].let { t -> ItemCategory.valueOf(t) },
+                    ItemCategory.BOTTOMS,
+                    it[ItemTable.description],
+                    it[ItemTable.timeCreated] ?: DateTimeUtil.getCurrentTime()
+                ),
                 null,
                 it[FileTable.timeCreated],
                 it[FileTable.timeUpdated]
@@ -86,7 +96,7 @@ object FileDaoImpl : FileDao {
     override fun getByItemId(itemId: Int): FileEntity? {
         val result = transaction {
             (FileTable innerJoin ItemTable)
-                .select { FileTable.item_id eq ItemTable.id and (FileTable.item_id eq itemId) }
+                .selectAll().where { FileTable.item_id eq ItemTable.id and (FileTable.item_id eq itemId) }
                 .singleOrNull()
         }
         return result?.let {
@@ -94,17 +104,24 @@ object FileDaoImpl : FileDao {
                 it[FileTable.id],
                 it[FileTable.name],
                 it[FileTable.size],
-                ItemEntity(
-                    it[ItemTable.id],
-                    it[ItemTable.category].let { t -> ItemCategory.valueOf(t) },
-                    it[ItemTable.description],
-                    it[ItemTable.timeCreated]
-                ),
+                null,
                 null,
                 it[FileTable.timeCreated],
                 it[FileTable.timeUpdated]
             )
         }
+    }
+
+//    ItemEntity(
+//    it[ItemTable.id],
+//    it[ItemTable.category].let { t -> ItemCategory.valueOf(t) },
+//    it[ItemTable.description],
+//    it[ItemTable.timeCreated]
+//    ),
+
+    override fun findByItemId(id: Int): FileEntity {
+        val result =  getByItemId(id)
+        return ObjectUtils.checkNotNull(result);
     }
 
     override fun getByOutfitId(outfitId: Int): List<FileEntity> {
@@ -134,7 +151,7 @@ object FileDaoImpl : FileDao {
         }
     }
 
-    override fun update(entity: FileEntity){
+    override fun update(entity: FileEntity) {
 
         transaction {
             val updateCount = FileTable.update({ FileTable.id eq entity.id!! }) {
@@ -145,7 +162,11 @@ object FileDaoImpl : FileDao {
                 it[timeCreated] = entity.timeCreated
                 it[timeUpdated] = entity.timeUpdated
             }
+            if (updateCount == 0) {
+                throw ExceptionCustomMessage(ExceptionTypes.INTERNAL_SERVER_ERROR).toException()
+            }
         }
+
     }
 
     override fun deleteAllByOutfitId(outfitId: Int) {

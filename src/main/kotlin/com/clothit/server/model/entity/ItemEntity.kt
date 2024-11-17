@@ -2,6 +2,7 @@ package com.clothit.server.model.entity
 
 import com.clothit.server.api.FileUrlConstant
 import com.clothit.server.api.dto.ItemShortDto
+import com.clothit.server.api.req.ItemCreateReq
 import com.clothit.server.api.req.ItemUpdateReq
 import com.clothit.server.model.enums.ItemCategory
 import com.clothit.util.DateTimeUtil
@@ -13,9 +14,8 @@ data class ItemEntity(
     var id: Int?,
     var category: ItemCategory?,
     var description: String?,
-    val timeCreation: Instant,
-
-    ) {
+    val timeCreation: Instant)
+{
     constructor(category: ItemCategory, description: String) : this(
         null,
         category,
@@ -23,13 +23,21 @@ data class ItemEntity(
         DateTimeUtil.getCurrentTime()
     )
 
-    fun toItemShortDto(fileId: Int) : ItemShortDto{
-        return ItemShortDto(this.id, ServerConstants.constantServerUrl
-                + FileUrlConstant.fileViewUrl.replace("{fileId}",fileId.toString()))
+    fun toItemShortDto(fileId: Int): ItemShortDto {
+        return ItemShortDto(
+            this.id, ServerConstants.SERVER_URL
+                    + FileUrlConstant.FILE_VIEW_URL.replace("{fileId}", fileId.toString())
+        )
     }
 
-    fun update(req: ItemUpdateReq){
+    fun update(req: ItemUpdateReq) {
         category = req.category
         description = req.description
+    }
+
+    companion object {
+        fun itemCreate(req: ItemCreateReq): ItemEntity {
+            return ItemEntity(req.category, req.description)
+        }
     }
 }

@@ -7,6 +7,9 @@ import java.util.*
 interface TokenDao {
     fun save(token: TokenEntity): Int
     fun getTokenByUserId(userId: UUID): TokenEntity?
+
+    fun getTokenByValue(value: String): TokenEntity?
+    fun findTokenByValue(value: String): TokenEntity
     fun deleteTokenByUserId(userId: UUID)
     fun deleteToken(token: String)
     fun tokenExists(credential: JWTCredential): Boolean

@@ -25,7 +25,7 @@ data class OutfitEntity(
     fun toShortOutfitDto(fileEntities: List<FileEntity>) : OutfitShortDto{
         val urls = ArrayList<String>()
         for(fileEntity in fileEntities){
-           val url = ServerConstants.constantServerUrl + FileUrlConstant.fileViewUrl.replace("{fileId}", fileEntity.id.toString())
+           val url = ServerConstants.SERVER_URL + FileUrlConstant.FILE_VIEW_URL.replace("{fileId}", fileEntity.id.toString())
             urls.add(url)
         }
 

@@ -4,16 +4,16 @@ import com.clothit.server.dao.ItemDao
 import com.clothit.server.model.entity.ItemEntity
 import com.clothit.server.model.enums.ItemCategory
 import com.clothit.server.model.persistence.ItemTable
-import org.jetbrains.exposed.sql.insert
-import org.jetbrains.exposed.sql.select
-import org.jetbrains.exposed.sql.selectAll
+import com.clothit.util.ObjectUtils
+import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.inList
 import org.jetbrains.exposed.sql.transactions.transaction
-import org.jetbrains.exposed.sql.update
 
 object ItemDaoImpl : ItemDao {
 
 
-    override fun save(entity: ItemEntity): Int? {
+    override fun save(entity: ItemEntity) {
         var id: Int? = null
         transaction {
             val insertResult = ItemTable.insert {
@@ -23,26 +23,33 @@ object ItemDaoImpl : ItemDao {
             }
             id = insertResult[ItemTable.id]
         }
-        return id
+        entity.id = id!!
     }
 
     override fun getById(id: Int): ItemEntity? {
 
-         val result = transaction {  ItemTable.selectAll().where { ItemTable.id eq id }.singleOrNull()}
+        val result = transaction { ItemTable.selectAll().where { ItemTable.id eq id }.singleOrNull() }
 
-        return transaction {  result?.let {
-            ItemEntity(
-                it[ItemTable.id],
-                it[ItemTable.category].let { t -> ItemCategory.valueOf(t) },
-                it[ItemTable.description],
-                it[ItemTable.timeCreated]
-            )
-        }}
+        return transaction {
+            result?.let {
+                ItemEntity(
+                    it[ItemTable.id],
+                    it[ItemTable.category].let { t -> ItemCategory.valueOf(t) },
+                    it[ItemTable.description],
+                    it[ItemTable.timeCreated]
+                )
+            }
+        }
+    }
+
+    override fun findById(itemId: Int): ItemEntity {
+        val result = getById(itemId)
+        return ObjectUtils.checkNotNull(result)
     }
 
     override fun getByIds(ids: List<Int>): List<ItemEntity> {
         return transaction {
-            ItemTable.select { ItemTable.id inList ids }
+            ItemTable.selectAll().where { ItemTable.id inList ids }
                 .map {
                     ItemEntity(
                         it[ItemTable.id],
@@ -84,7 +91,7 @@ object ItemDaoImpl : ItemDao {
     override fun update(entity: ItemEntity) {
 
         transaction {
-            val result = ItemTable.update({ ItemTable.id eq entity.id!! }){
+            val result = ItemTable.update({ ItemTable.id eq entity.id!! }) {
                 it[description] = entity.description
                 it[category] = entity.category!!.name
             }
@@ -94,7 +101,7 @@ object ItemDaoImpl : ItemDao {
 
     override fun getByCategory(category: String): List<ItemEntity> {
         return transaction {
-            ItemTable.select { ItemTable.category eq category }.map {
+            ItemTable.selectAll().where { ItemTable.category eq category }.map {
                 ItemEntity(
                     it[ItemTable.id],
                     it[ItemTable.category].let { t -> ItemCategory.valueOf(t) },
@@ -104,5 +111,4 @@ object ItemDaoImpl : ItemDao {
             }
         }
     }
-
 }

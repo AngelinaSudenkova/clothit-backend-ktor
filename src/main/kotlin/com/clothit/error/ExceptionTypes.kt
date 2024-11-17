@@ -1,6 +1,6 @@
 package com.clothit.error
 
-enum class ErrorTypes {
+enum class ExceptionTypes {
     BAD_REQUEST,
     UNAUTHORIZED,
     INTERNAL_SERVER_ERROR,

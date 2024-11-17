@@ -15,6 +15,7 @@ fun Application.outfitRoutingConfigure() {
     val outfitController: OutfitController by inject()
     routing {
         authenticate {
+
             post("service/clothit/api/v1/outfit") {
                 val req = call.receive<OutfitCreateReq>()
                 val idDto = outfitController.save(req)
@@ -41,11 +42,12 @@ fun Application.outfitRoutingConfigure() {
 
             get("service/clothit/api/v1/outfit/find") {
                 val outfitName = call.receive<OutfitFindReq>().name
-                outfitName?.let {
+                outfitName.let {
                     val shortOutfit = outfitController.find(outfitName)
                     call.respond(shortOutfit.toString())
                 }
             }
+
         }
     }
 }
