@@ -78,5 +78,22 @@ ALTER TABLE tokens
         FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE ;
 
 
+CREATE TABLE IF NOT EXISTS friend
+(
+    id SERIAL  NOT NULL,
+    user_id_owner uuid NOT NULL,
+    user_id_invited uuid NOT NULL,
+    invited_time TIMESTAMP NULL,
+    status VARCHAR(20) NOT NULL
+);
+
+ALTER TABLE friend
+    ADD CONSTRAINT fk_user_owner
+        FOREIGN KEY (user_id_owner) REFERENCES users (id)  ;
+
+ALTER TABLE friend
+    ADD CONSTRAINT fk_user_invited
+        FOREIGN KEY (user_id_invited) REFERENCES users (id)  ;
+
 
 
