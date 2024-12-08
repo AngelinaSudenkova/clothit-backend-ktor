@@ -1,14 +1,14 @@
-openapi: "3.0.3"
+openapi: "3.1.0"
 info:
-  title: "Application API"
-  description: "Application API"
+  title: "com_clothit_clothit_backend API"
+  description: "com_clothit_clothit_backend API"
   version: "1.0.0"
 servers:
-  - url: "http://0.0.0.0:8080"
+- url: "https://com_clothit_clothit_backend"
 paths:
   /:
     get:
-      description: "Hello World!"
+      description: ""
       responses:
         "200":
           description: "OK"
@@ -18,6 +18,411 @@ paths:
                 type: "string"
               examples:
                 Example#1:
-                  value: "Hello World!"
+                  value: "Hello, world!"
+  /test:
+    post:
+      description: ""
+  /service/clothit/api/v1/file:
+    post:
+      description: ""
+      responses:
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                type: "string"
+  /service/clothit/api/v1/file/{fileId}:
+    get:
+      description: ""
+      parameters:
+      - name: "fileId"
+        in: "path"
+        required: true
+        schema:
+          type: "integer"
+      responses:
+        "400":
+          description: "Bad Request"
+          content:
+            '*/*':
+              schema:
+                type: "string"
+              examples:
+                Example#1:
+                  value: "Invalid file ID"
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                type: "array"
+                items:
+                  type: "string"
+                  format: "byte"
+  /service/clothit/api/v1/file/update/{fileId}:
+    put:
+      description: ""
+      parameters:
+      - name: "fileId"
+        in: "path"
+        required: true
+        schema:
+          type: "integer"
+      responses:
+        "400":
+          description: "Bad Request"
+          content:
+            '*/*':
+              schema:
+                type: "string"
+              examples:
+                Example#1:
+                  value: "Invalid file ID"
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                type: "object"
+  /service/clothit/api/v1/item:
+    post:
+      description: ""
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ItemCreateReq"
+        required: true
+      responses:
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                type: "string"
+  /service/clothit/api/v1/item/{itemId}:
+    put:
+      description: ""
+      parameters:
+      - name: "itemId"
+        in: "path"
+        required: true
+        schema:
+          type: "integer"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ItemUpdateReq"
+        required: true
+      responses:
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                type: "string"
+              examples:
+                Example#1:
+                  value: "Updated"
+  /service/clothit/api/v1/item/list:
+    get:
+      description: ""
+      responses:
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                type: "string"
+  /service/clothit/api/v1/item/list/{category}:
+    get:
+      description: ""
+      parameters:
+      - name: "category"
+        in: "path"
+        required: true
+        schema:
+          type: "string"
+      responses:
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                type: "string"
+  /service/clothit/api/v1/login:
+    post:
+      description: ""
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserLoginReq"
+        required: true
+      responses:
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/SingInDto"
+        "400":
+          description: "Bad Request"
+          content:
+            '*/*':
+              schema:
+                type: "object"
+  /service/clothit/api/v1/logout:
+    delete:
+      description: ""
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserLogoutReq"
+        required: true
+      responses:
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                type: "object"
+  /service/clothit/api/v1/register:
+    post:
+      description: ""
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserRegisterReq"
+        required: true
+      responses:
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                type: "string"
+        "400":
+          description: "Bad Request"
+          content:
+            '*/*':
+              schema:
+                type: "object"
+  /service/clothit/api/v1/outfit:
+    post:
+      description: ""
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/OutfitCreateReq"
+        required: true
+      responses:
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                type: "string"
+  /service/clothit/api/v1/outfit/{outfitId}:
+    get:
+      description: ""
+      parameters:
+      - name: "outfitId"
+        in: "path"
+        required: true
+        schema:
+          type: "integer"
+      responses:
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                type: "string"
+    put:
+      description: ""
+      parameters:
+      - name: "outfitId"
+        in: "path"
+        required: true
+        schema:
+          type: "integer"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/OutfitUpdateReq"
+        required: true
+      responses:
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                type: "string"
+              examples:
+                Example#1:
+                  value: "Updated"
+  /service/clothit/api/v1/outfit/find:
+    get:
+      description: ""
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/OutfitFindReq"
+        required: true
+      responses:
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                type: "string"
+  /service/clothit/api/v1/outfit/list:
+    get:
+      description: ""
+      responses:
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                type: "string"
 components:
-  schemas: {}
+  schemas:
+    ItemCreateReq:
+      type: "object"
+      properties:
+        category:
+          type: "string"
+          enum:
+          - "ACCESSORIES"
+          - "TOPS"
+          - "BOTTOMS"
+          - "SHOES"
+          - "OUTWEAR"
+        description:
+          type: "string"
+        fileId:
+          type: "integer"
+          format: "int32"
+      required:
+      - "category"
+      - "description"
+    ItemUpdateReq:
+      type: "object"
+      properties:
+        category:
+          type: "string"
+          enum:
+          - "ACCESSORIES"
+          - "TOPS"
+          - "BOTTOMS"
+          - "SHOES"
+          - "OUTWEAR"
+        description:
+          type: "string"
+        fileId:
+          type: "integer"
+          format: "int32"
+      required:
+      - "category"
+      - "description"
+    UserLoginReq:
+      type: "object"
+      properties:
+        email:
+          type: "string"
+        password:
+          type: "string"
+      required:
+      - "email"
+      - "password"
+    SingInDto:
+      type: "object"
+      properties:
+        token:
+          type: "string"
+      required:
+      - "token"
+    UserLogoutReq:
+      type: "object"
+      properties:
+        token:
+          type: "string"
+      required:
+      - "token"
+    UserRegisterReq:
+      type: "object"
+      properties:
+        email:
+          type: "string"
+        password:
+          type: "string"
+        username:
+          type: "string"
+      required:
+      - "email"
+      - "password"
+      - "username"
+    OutfitCreateReq:
+      type: "object"
+      properties:
+        season:
+          type: "string"
+          enum:
+          - "WINTER"
+          - "SPRING"
+          - "SUMMER"
+          - "AUTUMN"
+        description:
+          type: "string"
+        name:
+          type: "string"
+        itemsId:
+          type: "array"
+          items:
+            type: "integer"
+            format: "int32"
+      required:
+      - "season"
+      - "description"
+      - "name"
+      - "itemsId"
+    OutfitUpdateReq:
+      type: "object"
+      properties:
+        season:
+          type: "string"
+          enum:
+          - "WINTER"
+          - "SPRING"
+          - "SUMMER"
+          - "AUTUMN"
+        description:
+          type: "string"
+        name:
+          type: "string"
+        itemsId:
+          type: "array"
+          items:
+            type: "integer"
+            format: "int32"
+      required:
+      - "season"
+      - "description"
+      - "name"
+      - "itemsId"
+    OutfitFindReq:
+      type: "object"
+      properties:
+        name:
+          type: "string"
+      required:
+      - "name"

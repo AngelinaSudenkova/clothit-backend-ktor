@@ -1,5 +1,6 @@
 package com.clothit.config
 
+import io.github.smiley4.ktorswaggerui.SwaggerUI
 import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.application.*
 import io.ktor.server.http.content.*
@@ -9,13 +10,21 @@ import io.ktor.server.plugins.swagger.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
-fun Application.swaggerConfigure() {
-    routing {
-        swaggerUI(path = "swagger", swaggerFile = "openapi/documentation.yaml") {
-            version = "4.15.5"
+fun Application.configureSwagger() {
+    install(SwaggerUI) {
+        swagger {
+
+        }
+        info {
+            title = "Example API"
+            version = "latest"
+            description = "Example API for testing and demonstration purposes."
+        }
+        server {
+            url = "http://localhost:8080"
+            description = "Development Server"
         }
     }
-
 }
 
 fun Application.openApiConfigure()

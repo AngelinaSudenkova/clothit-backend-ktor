@@ -48,6 +48,7 @@ fun Application.module() {
     ///-------------config
     serializationConfigure()
     corsConfigure()
-    swaggerConfigure()
+    configureSwagger()
+    openApiConfigure()
 
 }

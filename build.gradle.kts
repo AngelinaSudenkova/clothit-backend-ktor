@@ -48,6 +48,9 @@ dependencies {
     implementation("io.ktor:ktor-server-cors:$ktor_version")
     implementation("io.ktor:ktor-server-openapi:$ktor_version")
     implementation("ch.qos.logback:logback-classic:1.2.11")
+    implementation("io.github.smiley4:ktor-swagger-ui:3.6.0")
+
+
 
     implementation("io.ktor:ktor-server-auth:$ktor_version")
     implementation("io.ktor:ktor-server-auth-jwt:$ktor_version")
@@ -85,7 +88,7 @@ dependencies {
     testImplementation("org.mockito:mockito-core:4.0.0")
     testImplementation("org.jetbrains.kotlin:kotlin-test:1.6.0")
     testImplementation("io.mockk:mockk:1.12.0")
-    testImplementation("com.github.hyperskill:hs-test:master-SNAPSHOT")
+
 
 }
 
