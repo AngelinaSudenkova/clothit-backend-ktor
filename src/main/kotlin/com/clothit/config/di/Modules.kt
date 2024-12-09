@@ -15,7 +15,7 @@ import org.koin.dsl.module
 fun appModule() = module {
     single<UserDao> { UserDaoImpl }
     single<TokenDao> { TokenDaoImpl }
-    single<UserService> { UserServiceImpl(get(), get()) }
+    single<UserService> { UserServiceImpl(get(), get(), get()) }
     single<UserController> { UserController(get(), get()) }
 
     single<TokenDao> { TokenDaoImpl }

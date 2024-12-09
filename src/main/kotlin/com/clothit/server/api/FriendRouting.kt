@@ -8,7 +8,6 @@ import io.ktor.server.auth.jwt.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import org.koin.ktor.ext.inject
-import org.slf4j.LoggerFactory
 import java.util.*
 
 fun Application.friendRoutingConfigure() {
@@ -33,6 +32,19 @@ fun Application.friendRoutingConfigure() {
                 call.respond(friends)
             }
 
+            //get acceptedFriends
+            get("service/clothit/api/v1/friend/accepted") {
+                val userId = call.principal<JWTPrincipal>()?.let { principal ->
+                    val credential = JWTCredential(principal.payload)
+                    jwtService.getUserIdFromToken(credential)
+                }
+                if(userId == null) {
+                    call.respond(HttpStatusCode.BadRequest, "Invalid request")
+                    return@get
+                }
+                val acceptedFriends = friendController.getAcceptedFriends(UUID.fromString(userId.toString()))
+                call.respond(acceptedFriends)
+            }
 
             get("service/clothit/api/v1/friend/pending") {
                 val userId = call.principal<JWTPrincipal>()?.let { principal ->

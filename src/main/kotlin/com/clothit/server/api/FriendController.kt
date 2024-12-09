@@ -12,6 +12,10 @@ class FriendController(
         return friendService.getFriendsByUser(userId.toString())
     }
 
+    fun getAcceptedFriends(userId: UUID): List<FriendDto> {
+        return friendService.getAcceptedFriends(userId.toString())
+    }
+
 
     fun getPendingRequests(userId: UUID): List<FriendDto> {
         return friendService.getPendingRequests(userId.toString())
@@ -34,6 +38,6 @@ class FriendController(
 
 
     fun deleteFriendRequest(requestId: Int) {
-        friendService.delete(requestId)
+        friendService.deleteFriend(requestId)
     }
 }

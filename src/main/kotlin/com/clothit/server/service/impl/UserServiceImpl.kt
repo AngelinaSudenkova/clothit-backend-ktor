@@ -3,10 +3,12 @@ package com.clothit.server.service.impl
 import com.clothit.error.ErrorCustomMessage
 import com.clothit.error.ErrorTypes
 import com.clothit.server.api.dto.UserDto
+import com.clothit.server.api.dto.UserFriendDto
 import com.clothit.server.api.req.UserLoginReq
 import com.clothit.server.api.req.UserRegisterReq
 import com.clothit.server.dao.UserDao
 import com.clothit.server.model.entity.UserEntity
+import com.clothit.server.service.FriendService
 import com.clothit.server.service.JwtService
 import com.clothit.server.service.UserService
 import com.clothit.util.DateTimeUtil
@@ -15,7 +17,8 @@ import java.util.*
 
 class UserServiceImpl(
     private val userDao: UserDao,
-    private val tokeService: JwtService
+    private val tokeService: JwtService,
+    private val friendService: FriendService
 ) : UserService {
 
     override fun registerUser(userRegisterReq: UserRegisterReq): String {
@@ -81,6 +84,23 @@ class UserServiceImpl(
             )
         }
     }
+
+    override fun searchFriendsByUsername(userId: UUID, name: String): List<UserFriendDto> {
+        val userEntities = searchByUsername(name)
+        if (userEntities.isEmpty()) {
+            throw ErrorCustomMessage(ErrorTypes.NOT_FOUND_EXCEPTION).toException()
+        }
+        val friends = friendService.getFriendsByUser(userId.toString())
+        return userEntities.map { userDto ->
+            val friend = friends.find { it.userInvitedId == userDto.id.toString() }
+            UserFriendDto(
+                id = userDto.id,
+                username = userDto.username,
+                status = friend?.status ?: "NOT_FRIEND",
+                friendshipId = friend?.id.toString() ?: ""
+            )
+        }
+        }
 
     override fun getByEmail(email: String): UserEntity {
         val userEntity = userDao.searchByEmail(email)

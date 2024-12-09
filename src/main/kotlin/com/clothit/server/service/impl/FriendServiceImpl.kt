@@ -65,7 +65,7 @@ class FriendServiceImpl(
         val recipientRequest = FriendEntity(
             id = 0,
             userOwner = recipient.id,
-            userInvited = sender.id!!,
+            userInvited = sender.id,
             invitedTime = DateTimeUtil.getCurrentTime(),
             status = FriendApplicationStatus.PENDING
         )
@@ -162,8 +162,7 @@ class FriendServiceImpl(
         friendDao.updateStatus(id, status)
     }
 
-    //delete from recepient side
-    override fun delete(id: Int) {
+    override fun deleteFriend(id: Int) {
         friendDao.delete(id)
     }
 }

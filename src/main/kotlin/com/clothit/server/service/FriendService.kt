@@ -22,12 +22,12 @@ interface FriendService {
 
     fun acceptFriendRequest(requestId: Int): Boolean
 
+    fun deleteFriend(id: Int)
+
     fun rejectFriendRequest(requestId: Int): Boolean
 
     fun update(entity: FriendEntity)
 
     fun updateStatus(id: Int, status: FriendApplicationStatus)
-
-    fun delete(id: Int)
 
 }

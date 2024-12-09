@@ -3,6 +3,7 @@ package com.clothit.server.api
 import com.clothit.server.api.dto.SingInDto
 import com.clothit.server.api.dto.SingUpDto
 import com.clothit.server.api.dto.UserDto
+import com.clothit.server.api.dto.UserFriendDto
 import com.clothit.server.api.req.UserLoginReq
 import com.clothit.server.api.req.UserRegisterReq
 import com.clothit.server.service.JwtService
@@ -45,5 +46,9 @@ class UserController(
 
     fun searchByUsername(name: String): List<UserDto> {
         return userService.searchByUsername(name)
+    }
+
+    fun searchFriendsByUsername(userId: UUID, name: String): List<UserFriendDto> {
+        return userService.searchFriendsByUsername(userId, name)
     }
 }
