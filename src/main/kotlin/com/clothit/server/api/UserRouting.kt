@@ -44,5 +44,14 @@ fun Application.userRoutingConfigure() {
             userController.logout(req.token)
             call.respond(HttpStatusCode.OK)
         }
+
+        get("service/clothit/api/v1/user/{name}") {
+            val name = call.parameters["name"]
+            if (name != null) {
+                val listUser = userController.searchByUsername(name)
+                call.respond(listUser.toString())
+            }
+        }
+
     }
 }

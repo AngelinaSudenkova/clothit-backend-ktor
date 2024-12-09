@@ -5,8 +5,12 @@ import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.server.auth.jwt.*
+import io.ktor.server.plugins.callloging.*
 import io.ktor.server.plugins.cors.routing.*
 import org.koin.ktor.ext.inject
+import org.slf4j.LoggerFactory
+import org.slf4j.event.Level
+
 
 fun Application.configureSecurity() {
     val jwtService: JwtServiceImpl by inject()
@@ -33,5 +37,11 @@ fun Application.corsConfigure() {
         allowMethod(HttpMethod.Patch)
         allowMethod(HttpMethod.Delete)
     }
-
 }
+
+    fun Application.configureLogging() {
+        install(CallLogging) {
+            level = Level.INFO
+            logger = LoggerFactory.getLogger("io.ktor")
+        }
+    }

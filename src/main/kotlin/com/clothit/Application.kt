@@ -4,10 +4,7 @@ package com.clothit
 
 import com.clothit.config.*
 import com.clothit.config.di.appModule
-import com.clothit.server.api.fileRoutingConfigure
-import com.clothit.server.api.itemRoutingConfigure
-import com.clothit.server.api.outfitRoutingConfigure
-import com.clothit.server.api.userRoutingConfigure
+import com.clothit.server.api.*
 import io.ktor.server.application.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
@@ -34,6 +31,7 @@ fun Application.module() {
     }
 
     configureRouting()
+    configureLogging()
 
     ///--------------security
     configureSecurity()
@@ -44,6 +42,7 @@ fun Application.module() {
     outfitRoutingConfigure()
     configureRouting()
     userRoutingConfigure()
+    friendRoutingConfigure()
 
     ///-------------config
     serializationConfigure()

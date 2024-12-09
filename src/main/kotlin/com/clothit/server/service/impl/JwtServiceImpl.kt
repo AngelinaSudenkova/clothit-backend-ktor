@@ -101,6 +101,11 @@ class JwtServiceImpl(
 
     private fun extractEmail(credential: JWTCredential): String? =
         credential.payload.getClaim("email").asString()
+
+
+    fun getUserIdFromToken(credential: JWTCredential): UUID? {
+        return credential.payload.getClaim("userId").asString()?.let { UUID.fromString(it) }
+    }
 }
 
 private fun generateToken(audience: String, issuer: String, secret: String, email: String, userId: UUID): String {
@@ -112,3 +117,5 @@ private fun generateToken(audience: String, issuer: String, secret: String, emai
         .withExpiresAt(Date(System.currentTimeMillis() + 3_600_000))
         .sign(Algorithm.HMAC256(secret))
 }
+
+
